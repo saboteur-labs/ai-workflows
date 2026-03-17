@@ -24,7 +24,7 @@ see `testing/write-e2e-scenario.md` for those.
 
 - You have a module or set of functions with no existing tests
 - You want a first-pass test suite to iterate from
-- You're reviewing someone else's code and want to understand its behavior
+- You're reviewing someone else's code and want to understand its behaviour
   through tests
 - NOT for files over ~300 lines — chunk the file first and run this prompt
   per logical unit (see
@@ -50,7 +50,7 @@ Framework: {{TEST_FRAMEWORK}}
 Source code:
 ```{{LANGUAGE}}
 {{SOURCE_CODE}}
-````
+```
 
 Generate a complete unit test file that:
 
@@ -72,27 +72,24 @@ Include import statements. Assume the test file lives at the same directory
 level as the source file.
 
 {{ADDITIONAL_INSTRUCTIONS}}
-
-```
+````
 
 ### Placeholders
 
-| Placeholder | Description | Example |
-|-------------|-------------|---------|
-| `{{LANGUAGE}}` | Programming language of the source file | `TypeScript`, `Python`, `JavaScript` |
-| `{{TEST_FRAMEWORK}}` | Test framework to use | `Jest`, `Pytest`, `Vitest`, `Mocha + Chai` |
-| `{{SOURCE_CODE}}` | Full contents of the source file to test | *(paste file contents)* |
-| `{{ADDITIONAL_INSTRUCTIONS}}` | Any project-specific conventions or constraints to follow. Leave blank or remove if none. | `Use our custom \`renderHook\` helper from \`test-utils\`. All async tests must use \`async/await\`, not \`.then()\`.` |
+| Placeholder                   | Description                                                               | Example                                                                                                                |
+| ----------------------------- | ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `{{LANGUAGE}}`                | Programming language of the source file                                   | `TypeScript`, `Python`, `JavaScript`                                                                                   |
+| `{{TEST_FRAMEWORK}}`          | Test framework to use                                                     | `Jest`, `Pytest`, `Vitest`, `Mocha + Chai`                                                                             |
+| `{{SOURCE_CODE}}`             | Full contents of the source file to test                                  | _(paste file contents)_                                                                                                |
+| `{{ADDITIONAL_INSTRUCTIONS}}` | Any project-specific conventions or constraints. Remove the line if none. | `Use our custom \`renderHook\` helper from \`test-utils\`. All async tests must use \`async/await\`, not \`.then()\`.` |
 
 ## Low-context variant
 
-Use this when `context_budget: medium` is too large for your setup (small
-local model or heavily loaded session). Removes framework-specific detail and
-output constraints. Expect less structured output; you may need to clean up
-the result.
+Use when `context_budget: medium` is too large for your setup. Removes
+framework-specific detail and output constraints. Expect less structured
+output; you may need to clean up the result.
 
-```
-
+````
 Write unit tests for this {{LANGUAGE}} code using {{TEST_FRAMEWORK}}.
 
 Cover: happy paths, edge cases, error cases.
@@ -103,8 +100,7 @@ Use mocks only for external I/O.
 ```
 
 Output the test file only, with imports.
-
-```
+````
 
 ## Notes & tips
 
@@ -123,4 +119,3 @@ Output the test file only, with imports.
   [`testing/generate-test-cases.md`](../testing/generate-test-cases.md)
 - Related skills:
   [`skills/coding/implement-feature/`](../../skills/coding/implement-feature/)
-```
