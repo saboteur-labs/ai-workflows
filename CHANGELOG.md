@@ -1,0 +1,364 @@
+# Changelog
+
+All notable changes to this repo are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+
+When contributing, add your entry under `[Unreleased]`. When you are ready
+to tag a version, move the `[Unreleased]` entries to a new dated version
+section (e.g. `## [1.1.0] — YYYY-MM-DD`), add the comparison URL at the
+bottom, and open a new empty `[Unreleased]` block above it.
+
+---
+
+## [Unreleased]
+
+---
+
+## [1.0.0] — 2026-03-18
+
+Initial release. Complete knowledge base covering context management,
+model selection, AI workflow patterns, a full prompt library, agent skills,
+worked examples, supporting tooling, and a full repo maintenance and
+guardrail system for human and AI contributors.
+
+### Added — Structure and templates
+
+- `README.md` — root repo overview: how to use the repo, directory
+  structure, context budget system, supported interfaces, local model
+  guidance, and contribution entry points
+- `CONTRIBUTING.md` — contribution guide covering prompts, skills, guides,
+  and examples; proposal-first requirement; local validation instructions;
+  content standards; complete CI check reference
+- `AGENTS.md` — rules of engagement for AI agents working in this repo;
+  covers propose-before-act rule, atomicity requirement, guardrails
+  against hallucination and outdated information, protected files, and
+  a quick-reference table for common tasks
+- `LICENSE` — MIT license
+- `templates/prompt-template.md` — canonical template for all files in
+  `prompts/`; complete frontmatter reference with inline documentation,
+  all body sections, `review-by` and `verified-against` fields, and a
+  pre-commit checklist including change proposal requirement
+- `templates/skill-template.md` — Agent Skills spec-compliant template for
+  all skill directories; covers directory structure, frontmatter fields,
+  body patterns (role/scope, steps, output format, gotchas, validation
+  loops, progressive disclosure), `review-by` and `verified-against`
+  fields, low-context variant guidance, and skills-vs-prompts reference
+- `templates/change-proposal-template.md` — required format for all
+  proposed changes; covers file list, before/after diffs, dependency map
+  confirmation, sources section, freshness check, and validation checklist
+- `templates/structures/` — document structure templates for content types
+  not covered by the prompt and skill templates
+    - `guide-template.md` — frontmatter with `is_evergreen`, `review-by`,
+      and `verified-against` fields; body sections; pre-commit checklist
+    - `example-step-template.md` — step file structure with filled-prompt
+      section, representative output, and review gate checklist
+    - `directory-readme-template.md` — canonical column formats for guide,
+      prompt, and example README index tables
+    - `changelog-entry-template.md` — entry formats for additions,
+      modifications, deletions, and structural changes
+
+### Added — Guides: context
+
+- `guides/context/context-window-basics.md` — what context windows are,
+  token estimation, what consumes context in a session, context window
+  sizes by model tier, the context budget system, and common failure
+  patterns (vanishing instructions, big file problem, compounding history)
+- `guides/context/chunking-strategies.md` — when to chunk vs summarise;
+  chunking by content type (code, documentation, data files, mixed
+  content); overlap strategies; reassembly patterns; shell pipeline
+  for processing chunks; common chunking mistakes
+- `guides/context/low-memory-workarounds.md` — seven techniques for small
+  local models: budget calculation, chunking, `-minimal` skill variants,
+  extract-before-sending, session summarisation, one-task-per-session,
+  structured output formats, offline pre-processing; LM Studio settings
+  for code tasks; quick-reference symptom-to-fix table
+- `guides/context/context-budget-guide.md` — step-by-step decision tree
+  for choosing the right prompt/skill tier; token estimation by content
+  type; quick reference card by model class and session state; guidance
+  on improving output when using a lower tier
+
+### Added — Guides: models
+
+- `guides/models/local-vs-remote.md` — five-dimension comparison table;
+  when to use local (privacy, offline, high-frequency, experimentation);
+  when to use remote (context limits, capability, `high`-budget prompts,
+  polish passes); the hybrid approach; decision checklist; environment
+  file pattern for switching between endpoints
+- `guides/models/model-selection-guide.md` — four capability profiles
+  (instruction following, code generation, reasoning, long-context
+  coherence); how model size and quantization affect each profile;
+  task-to-profile matching table; three-test evaluation process for a
+  new model; when to switch to hosted
+- `guides/models/lm-studio-setup.md` — model selection criteria (RAM,
+  context window, task type); RAM-per-billion-parameters table by
+  quantization; server configuration; inference settings for code tasks;
+  connection instructions for Cursor, Continue.dev, Aider, and direct
+  API (shell, Node, Python); context window checklist; troubleshooting
+
+### Added — Guides: workflows
+
+- `guides/workflows/ide-plugin-workflow.md` — inline chat vs agent mode;
+  skill injection for Cursor (`.cursorrules`, chat, `--install-skill`),
+  Continue.dev (`config.json`, `.continuerc.json`), and Copilot Chat;
+  file reference syntax by plugin; context management in long sessions;
+  feature implementation workflow; gotchas
+- `guides/workflows/chat-interface-workflow.md` — when chat is the right
+  interface; skill injection as first message; prompt pasting and file
+  uploads; session discipline; resume pattern using
+  `summarize-for-handoff.md`; spec-writing workflow; gotchas
+- `guides/workflows/cli-tool-workflow.md` — system prompt flags for Claude
+  Code and Aider; stdin piping patterns; scripted/non-interactive mode;
+  shell script integration; session management; interface comparison
+- `guides/workflows/api-scripted-workflow.md` — LM Studio local endpoint;
+  Anthropic and OpenAI API calls; bash, Node.js, and Python script
+  patterns; batch processing; response parsing; error handling and rate
+  limit patterns
+
+### Added — Guides: agent patterns
+
+- `guides/agent-patterns/single-agent.md` — what makes a good single-agent
+  task; the plan-confirm-execute loop; scoping tasks for a single session;
+  output validation by type; connecting sessions with clean handoffs;
+  common failure modes
+- `guides/agent-patterns/multi-agent-orchestration.md` — when multi-agent
+  is worth the overhead; the three core roles (Planner, Implementer,
+  Reviewer); structured handoff format; reference pipeline from spec to
+  tested implementation with human review gates; contradiction resolution;
+  common orchestration failures
+- `guides/agent-patterns/human-in-the-loop.md` — why review gates matter;
+  the three highest-leverage review points; calibrating review depth to
+  task risk; efficient review techniques; review gate checklists; when to
+  skip a review gate
+
+### Added — Guides: repo maintenance
+
+- `guides/repo-maintenance/how-this-repo-is-structured.md` — authoritative
+  reference for what lives where and why; design principles, directory
+  purposes, structural invariants, and what-belongs-where decision guide
+- `guides/repo-maintenance/dependency-map.md` — defines which files must
+  change together for every type of repo modification; enforces atomicity
+  for prompts, skills, guides, examples, tools, templates, and CI changes
+- `guides/repo-maintenance/contributing-with-ai.md` — how to use the
+  repo's own skills to propose additions; step-by-step workflow;
+  guardrail descriptions; common pitfalls
+
+### Added — Prompts: code
+
+- `prompts/code/generate-unit-tests.md` — unit test suite generation;
+  covers happy paths, edge cases, failure modes; enforces mock discipline
+  (external I/O only); test naming convention; low-context variant
+- `prompts/code/code-review.md` — structured review across correctness,
+  security, maintainability, and conventions; per-finding severity labels;
+  summary section; diff review support; low-context variant
+- `prompts/code/refactor-for-readability.md` — behaviour-preserving
+  refactor focused on naming, function size, nesting, comments, and
+  consistency; produces refactored code plus a typed changelog of changes;
+  low-context variant
+- `prompts/code/scaffold-module.md` — generates module skeleton with typed
+  signatures, placeholder bodies, test file scaffold, and barrel file;
+  convention-driven; low-context variant
+- `prompts/code/explain-codebase.md` — audience- and depth-calibrated
+  explanation covering purpose, key components, how it works, dependencies,
+  and things to know before modifying; low-context variant
+
+### Added — Prompts: planning
+
+- `prompts/planning/write-feature-spec.md` — structured spec from a rough
+  idea; produces overview, goals, non-goals, user stories, functional
+  requirements, open questions, and deferred scope; enforces 500-word
+  limit and RFC 2119 priority language
+- `prompts/planning/break-into-tasks.md` — ordered task list from a
+  reviewed spec; each task has a done condition, file list, dependency
+  links, and estimate; produces critical path and risk summary
+- `prompts/planning/write-adr.md` — Architecture Decision Record with
+  context, options considered, decision, consequences (positive, negative,
+  neutral), and revisit conditions; enforces non-empty negative consequences
+- `prompts/planning/estimate-complexity.md` — structured complexity and
+  risk assessment with estimate, confidence level, reasoning, risk factor
+  table, assumption list, decomposition recommendation, and escalation flags
+
+### Added — Prompts: testing
+
+- `prompts/testing/generate-test-cases.md` — test case list (no code)
+  covering happy paths, boundary values, invalid inputs, error conditions,
+  and domain-specific edge cases; coverage gaps section surfaces spec
+  ambiguities; supports Given/When/Then and table formats
+- `prompts/testing/review-test-coverage.md` — reviews test suite against
+  source for missing cases, weak assertions, redundant tests, and quality
+  issues; coverage assessment and recommended action; low-context variant
+- `prompts/testing/write-e2e-scenario.md` — plain-language or framework
+  code e2e scenarios; supports Playwright (TypeScript/Python) and Cypress;
+  covers primary happy path, validation/error paths, and state persistence
+
+### Added — Prompts: agent-orchestration
+
+- `prompts/agent-orchestration/decompose-task.md` — breaks a complex task
+  into independently executable sub-tasks; each sub-task has a done
+  condition, input/output specification, and dependency links; produces
+  execution order and assumption list
+- `prompts/agent-orchestration/summarize-for-handoff.md` — structured
+  session handoff document covering what was produced, decisions made,
+  current state, next instruction, and context to carry forward;
+  two-level consolidation pattern for chunk processing
+- `prompts/agent-orchestration/self-critique-loop.md` — two-step (critique
+  then revise) self-review against original requirements; optional focus
+  parameter; inline change markers on revised output
+
+### Added — Skills: coding
+
+- `skills/coding/implement-feature/` — feature implementation from a spec;
+  plan-confirm-execute loop; surveys codebase before coding; incremental
+  implementation; convention adherence; error handling; test generation;
+  structured implementation summary output format; constraints and gotchas
+    - `references/patterns.md` — per-project stub for code patterns
+    - `references/conventions.md` — per-project stub for naming and structure
+    - `assets/implementation-summary-template.md` — output format template
+- `skills/coding/implement-feature-minimal/` — low-context variant (~400
+  tokens); retains role, plan-first rule, output format, and core
+  constraints
+- `skills/coding/debug-issue/` — systematic root cause diagnosis;
+  hypothesis-evidence-isolation-fix-verify workflow; constraints against
+  symptom suppression and unrelated changes; async, type coercion, test
+  isolation, and stack trace gotchas
+    - `references/patterns.md` — per-project stub for debug patterns
+    - `references/known-issues.md` — per-project stub for known bugs and
+      recurring failure modes
+- `skills/coding/debug-issue-minimal/` — low-context variant
+
+### Added — Skills: planning
+
+- `skills/planning/spec-writer/` — iterative spec writing through dialogue;
+  ask-before-draft approach with 2–3 targeted questions; prioritised
+  question categories (scope, constraints, success); RFC 2119 language
+  enforcement; 500-word limit; gotchas for vague acceptance criteria and
+  over-broad non-goals
+    - `references/domain.md` — per-project stub for domain language and
+      business rules
+- `skills/planning/spec-writer-minimal/` — low-context variant
+
+### Added — Skills: repo tools
+
+- `skills/repo-maintenance/` — agent skill for maintaining this repo;
+  loads `AGENTS.md` rules, applies dependency map, enforces propose-
+  before-act, uses templates, checks for contradictions and stale claims
+    - `references/repo-structure.md` — complete file tree loaded on demand
+    - `references/style-guide.md` — voice, tone, formatting, and language
+      patterns to avoid
+- `skills/repo-maintenance-minimal/` — low-context variant
+- `skills/freshness-check/` — assesses whether a file's external claims
+  are likely still accurate; produces a prioritised verification checklist;
+  does not verify facts itself
+    - `references/external-claims-registry.md` — log of verified external
+      claims with source URLs and verification dates
+
+### Added — Examples
+
+- `examples/spec-to-implementation/` — complete four-step worked example
+  using a user activity CSV export feature; shows filled-in prompts and
+  representative model output; includes human review gate checklists
+    - `01-write-spec.md` — spec writing with open question surfacing
+    - `02-break-into-tasks.md` — task decomposition with critical path and
+      performance risk identification
+    - `03-scaffold-module.md` — TypeScript service scaffold with type
+      decision rationale
+    - `04-generate-tests.md` — Jest test generation with mock patterns and
+      coverage gap analysis
+- `examples/low-context-chunked-review/` — two-step worked example
+  reviewing a 450-line TypeScript service on a local 8k-context model
+    - `01-chunk-file.md` — token estimation, chunker invocation, chunk
+      verification, 60%-budget-threshold rule
+    - `02-review-chunks.md` — per-chunk review pattern, consolidated output
+      example, finding triage checklist
+
+### Added — Tools
+
+- `tools/fetch-prompt.sh` — fetches prompts and skills from the repo;
+  supports `--copy` (clipboard), `--install-skill` (copies skill directory
+  to `.agents/skills/`), `--list` (with context budget display), `--remote`
+  (raw GitHub URL fetch), `--raw` (include frontmatter); auto-detects repo
+  root from script location; colour output with `NO_COLOR` support
+- `tools/chunk-file.sh` — splits files into context-window-friendly chunks;
+  three modes (`functions`, `sections`, `lines`; auto-detects from file
+  extension); configurable chunk size and overlap; `--dry-run` and
+  `--stats` flags; supports 8 language families for function-boundary
+  detection; degrades gracefully to `lines` for unknown file types
+- `tools/validate.sh` — runs all repo validation checks locally before
+  pushing; supports `--check <name>` to run a single check,
+  `--changed-only` to scan only modified files, and named check aliases
+  matching the CI workflows
+- `tools/lib/check_frontmatter.sh` — validates required frontmatter
+  fields, `context_budget` values, skill name/directory match, and
+  description length; blocks merge on failure
+- `tools/lib/check_atomicity.sh` — verifies all dependency-map couplings
+  are satisfied for changed files (CHANGELOG, README index tables,
+  minimal skill variants); blocks merge on failure
+- `tools/lib/check_links.sh` — verifies all internal markdown links
+  resolve to existing files; skips links inside code fences and known
+  placeholder patterns; blocks merge on failure
+- `tools/lib/check_placeholders.sh` — detects unfilled `{{PLACEHOLDER}}`
+  tokens outside code fences and inline backtick spans; handles nested
+  fence types including VSCode-converted quadruple backtick fences;
+  blocks merge on failure
+- `tools/lib/check_freshness.sh` — warns on files whose `review-by` date
+  has passed or expires within 30 days; non-blocking; runs on PR and
+  weekly schedule
+- `tools/lib/chunk_file.py` — stub; token-accurate chunker using tiktoken
+- `tools/lib/fetch_prompt.js` — stub; Node.js programmatic API for
+  `fetch-prompt.sh`
+
+### Added — GitHub configuration
+
+- `.github/ISSUE_TEMPLATE/new-prompt.md` — structured issue template for
+  proposing or contributing a new prompt
+- `.github/ISSUE_TEMPLATE/new-skill.md` — structured issue template for
+  proposing or contributing a new skill
+- `.github/pull_request_template.md` — PR checklist covering prompts,
+  skills, and general changes
+- `.github/workflows/validate-frontmatter.yml` — thin CI wrapper calling
+  `tools/lib/check_frontmatter.sh`; blocks merge
+- `.github/workflows/validate-change-atomicity.yml` — thin CI wrapper
+  calling `tools/lib/check_atomicity.sh`; blocks merge
+- `.github/workflows/validate-links.yml` — thin CI wrapper calling
+  `tools/lib/check_links.sh`; blocks merge
+- `.github/workflows/validate-placeholders.yml` — thin CI wrapper calling
+  `tools/lib/check_placeholders.sh`; blocks merge
+- `.github/workflows/validate-freshness.yml` — thin CI wrapper calling
+  `tools/lib/check_freshness.sh`; warns only; runs on PR and weekly cron
+
+### Design decisions
+
+- **Model-agnostic throughout** — no model names, vendor-specific syntax,
+  or pricing in any prompt, skill, or guide; content uses capability tiers
+  and interface types instead
+- **Context budget as first-class field** — every prompt and skill declares
+  `context_budget` / `context-budget` to make local model viability
+  immediately visible without reading the content
+- **Agent Skills specification compliance** — skills use directory-per-skill
+  structure with spec-defined frontmatter; custom metadata (context budget,
+  interfaces) goes in the `metadata` map to avoid field conflicts; validated
+  by `skills-ref validate` and the CI workflow
+- **Outer tilde / quadruple backtick fences for nested code blocks** —
+  prompt files that contain code blocks within the prompt text use `~~~`
+  (or ` ` ```` after VSCode conversion) for the outer fence and
+  triple backticks for inner language-tagged blocks, preventing markdown
+  parser failures; the placeholder checker handles any run of 3+ fence
+  characters of the same type
+- **Copy-not-link distribution** — the repo is used by reading and copying
+  into projects, not as a git submodule or dependency; `tools/fetch-prompt.sh`
+  and `--install-skill` support this workflow without submodule overhead
+- **Per-project reference stubs** — skills include `references/` files
+  that are intentionally incomplete stubs; filling them in with
+  project-specific patterns and conventions is how skills are adapted for
+  a new codebase
+- **Propose-before-act for all contributors** — human and AI contributors
+  must submit a change proposal (`templates/change-proposal-template.md`)
+  before creating or modifying files; `AGENTS.md` encodes this as a hard
+  rule for AI agents; CI enforces atomicity automatically
+- **Validation scripts run locally and in CI** — all CI checks are
+  implemented as shell scripts in `tools/lib/` so developers can run the
+  same checks locally before pushing; CI workflows are thin wrappers
+- **macOS / bash 3.2 compatibility** — all shell scripts avoid bash 4+
+  features (`mapfile`, `grep -P`, `match()` with alternation) to work
+  without Homebrew bash on macOS
+
+[1.0.0]: https://github.com/your-org/ai-workflows/releases/tag/v1.0.0
