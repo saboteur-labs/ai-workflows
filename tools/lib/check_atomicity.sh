@@ -24,9 +24,15 @@ CHANGED_ONLY=0
 # In CI: set CHANGED_FILES_PATH to a file containing the diff list.
 # Locally: use git status to find staged + unstaged changes.
 if [[ -n "${CHANGED_FILES_PATH:-}" && -f "$CHANGED_FILES_PATH" ]]; then
-  mapfile -t changed < "$CHANGED_FILES_PATH"
+  changed=()
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && changed+=("$_line")
+  done < "$CHANGED_FILES_PATH"
 else
-  mapfile -t changed < <(
+  changed=()
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && changed+=("$_line")
+  done < <(
     { git diff --name-only HEAD; git diff --name-only --cached; } 2>/dev/null \
     | sort -u || true
   )

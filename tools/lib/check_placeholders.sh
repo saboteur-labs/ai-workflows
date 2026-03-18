@@ -20,13 +20,18 @@ CHANGED_ONLY=0
 [[ "${1:-}" == "--changed-only" ]] && CHANGED_ONLY=1
 
 # ── Build file list ────────────────────────────────────────────────────────────
+files=()
 if [[ "$CHANGED_ONLY" -eq 1 ]]; then
-  mapfile -t files < <(
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && files+=("$_line")
+  done < <(
     { git diff --name-only HEAD; git diff --name-only --cached; } 2>/dev/null \
     | grep -E '^(prompts|skills|guides|examples)/.*\.md$' | sort -u || true
   )
 else
-  mapfile -t files < <(
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && files+=("$_line")
+  done < <(
     find prompts skills guides examples -name "*.md" -print 2>/dev/null | sort
   )
 fi
@@ -41,15 +46,59 @@ for file in "${files[@]:-}"; do
   if echo "$file" | grep -qE '/(references|assets)/'; then continue; fi
   if echo "$file" | grep -q 'tools/lib/'; then continue; fi
 
-  # Strip code fences (``` and ~~~) before checking
-  # Placeholders inside fences are intentional (template examples)
+  # Strip code fences and inline backtick spans before checking.
+  #
+  # Fences: any run of 3+ identical characters (` or ~) opens a fence.
+  # The fence closes on a line that starts with the same character repeated
+  # at least the same number of times, with nothing else on the line.
+  # This handles ```, ~~~, ```` (VSCode auto-conversion), ~~~~~, etc.
+  #
+  # Inline backtick spans (`...` and ``...``) are stripped within each
+  # non-fenced line so that prose like "fill in `{{PLACEHOLDER}}`" does
+  # not trigger a false positive.
   stripped=$(awk '
-    /^(```|~~~)/ { in_fence = !in_fence; next }
-    !in_fence    { print }
+    BEGIN { in_fence = 0; fence_char = ""; fence_len = 0 }
+    function detect_fence(line,    c, n, i) {
+      # Returns 1 and sets fence_char/fence_len if line opens a fence
+      c = substr(line, 1, 1)
+      if (c != "`" && c != "~") return 0
+      n = 0
+      for (i = 1; i <= length(line); i++) {
+        if (substr(line, i, 1) == c) n++
+        else break
+      }
+      if (n >= 3) { fence_char = c; fence_len = n; return 1 }
+      return 0
+    }
+    function is_close(line,    c, n, i, rest) {
+      # Returns 1 if line closes the current fence
+      c = substr(line, 1, 1)
+      if (c != fence_char) return 0
+      n = 0
+      for (i = 1; i <= length(line); i++) {
+        if (substr(line, i, 1) == c) n++
+        else break
+      }
+      # Remainder must be only spaces
+      rest = substr(line, n + 1)
+      gsub(/[[:space:]]/, "", rest)
+      return (n >= fence_len && rest == "")
+    }
+    {
+      if (in_fence) {
+        if (is_close($0)) { in_fence = 0; fence_char = ""; fence_len = 0 }
+        next
+      }
+      if (detect_fence($0)) { in_fence = 1; next }
+      # Strip inline backtick spans: ``...`` then `...`
+      gsub(/``[^`]*``/, "")
+      gsub(/`[^`]*`/, "")
+      print
+    }
   ' "$file")
 
   # Check for {{PLACEHOLDER}} pattern (uppercase letters and underscores only)
-  matches=$(echo "$stripped" | grep -oP '\{\{[A-Z][A-Z0-9_]*\}\}' | sort -u || true)
+  matches=$(echo "$stripped" | grep -oE '\{\{[A-Z][A-Z0-9_]*\}\}' | sort -u || true)
   if [[ -n "$matches" ]]; then
     echo -e "${RED}FAIL${RESET}  Unfilled placeholders in $file:"
     echo "$matches" | while read -r m; do echo "         $m"; done

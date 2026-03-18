@@ -31,22 +31,28 @@ frontmatter_field() {
 }
 
 # ── Build file list ────────────────────────────────────────────────────────────
+prompt_files=()
+skill_files=()
 if [[ "$CHANGED_ONLY" -eq 1 ]]; then
-  mapfile -t prompt_files < <(
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && prompt_files+=("$_line")
+  done < <(
     { git diff --name-only HEAD; git diff --name-only --cached; } 2>/dev/null \
     | grep -E '^prompts/[^/]+/[^/]+\.md$' | grep -v 'README\.md' | sort -u || true
   )
-  mapfile -t skill_files < <(
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && skill_files+=("$_line")
+  done < <(
     { git diff --name-only HEAD; git diff --name-only --cached; } 2>/dev/null \
     | grep -E '^skills/.*/SKILL\.md$' | sort -u || true
   )
 else
-  mapfile -t prompt_files < <(
-    find prompts -name "*.md" ! -name "README.md" -print 2>/dev/null | sort
-  )
-  mapfile -t skill_files < <(
-    find skills -name "SKILL.md" -print 2>/dev/null | sort
-  )
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && prompt_files+=("$_line")
+  done < <(find prompts -name "*.md" ! -name "README.md" -print 2>/dev/null | sort)
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && skill_files+=("$_line")
+  done < <(find skills -name "SKILL.md" -print 2>/dev/null | sort)
 fi
 
 # ── Check prompt files ─────────────────────────────────────────────────────────
@@ -99,7 +105,7 @@ for file in "${skill_files[@]:-}"; do
 
   # Validate name format: lowercase, hyphens, no leading/trailing/consecutive hyphens
   if [[ -n "$name_val" ]]; then
-    if ! echo "$name_val" | grep -qP '^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$'; then
+    if ! echo "$name_val" | grep -qE '^[a-z0-9][a-z0-9-]*[a-z0-9]$|^[a-z0-9]$'; then
       echo -e "${RED}FAIL${RESET} name '${name_val}' contains invalid characters in $file"
       file_failed=1
     fi

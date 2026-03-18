@@ -104,7 +104,7 @@ run_check() {
   [[ "$FIX_MODE" -eq 1 ]]     && extra_args+=("--fix")
 
   set +e
-  bash "$script" "${extra_args[@]}"
+  bash "$script" ${extra_args[@]+"${extra_args[@]}"}
   local exit_code=$?
   set -e
 

@@ -37,13 +37,18 @@ date_plus_days() {
 warn_threshold=$(date_plus_days 30 2>/dev/null || echo "")
 
 # ── Build file list ────────────────────────────────────────────────────────────
+files=()
 if [[ "$CHANGED_ONLY" -eq 1 ]]; then
-  mapfile -t files < <(
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && files+=("$_line")
+  done < <(
     { git diff --name-only HEAD; git diff --name-only --cached; } 2>/dev/null \
     | grep '\.md$' | sort -u || true
   )
 else
-  mapfile -t files < <(
+  while IFS= read -r _line; do
+    [[ -n "$_line" ]] && files+=("$_line")
+  done < <(
     find . -name "*.md" \
       -not -path "./.git/*" \
       -not -path "./node_modules/*" \
@@ -62,7 +67,7 @@ for file in "${files[@]:-}"; do
   [[ -z "$review_by" ]] && continue
 
   # Validate format
-  if ! echo "$review_by" | grep -qP '^\d{4}-\d{2}-\d{2}$'; then
+  if ! echo "$review_by" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
     echo -e "${YELLOW}WARN${RESET}  Invalid review-by date format in $file: '$review_by'"
     echo "       Expected: YYYY-MM-DD"
     continue
