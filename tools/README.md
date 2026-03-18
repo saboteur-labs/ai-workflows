@@ -122,18 +122,70 @@ to consolidate the results.
 
 ---
 
+## validate.sh
+
+Run all repo validation checks locally before pushing. Mirrors the full
+CI check suite so failures are caught before they reach GitHub.
+
+```sh
+# Run all checks
+./tools/validate.sh
+
+# Run a single check
+./tools/validate.sh --check links
+./tools/validate.sh --check frontmatter
+./tools/validate.sh --check atomicity
+./tools/validate.sh --check placeholders
+./tools/validate.sh --check freshness
+
+# Only check files changed since last commit (fastest for pre-push)
+./tools/validate.sh --changed-only
+
+# Combine flags
+./tools/validate.sh --check links --changed-only
+```
+
+### Checks and their CI equivalents
+
+| Check          | Blocks merge? | What it verifies                                                      |
+| -------------- | ------------- | --------------------------------------------------------------------- |
+| `frontmatter`  | Yes           | Required fields, valid `context_budget`, skill name matches directory |
+| `atomicity`    | Yes           | CHANGELOG + README index tables updated when content changes          |
+| `links`        | Yes           | All internal markdown links resolve to real files                     |
+| `placeholders` | Yes           | No `{{PLACEHOLDERS}}` outside code fences, no stray stub markers      |
+| `freshness`    | No (warns)    | `review-by` dates not expired or expiring within 30 days              |
+
+Exit codes: `0` = all blocking checks passed, `1` = blocking failure,
+`2` = warnings only (freshness).
+
+---
+
 ## lib/
+
+Implementations called by the shell entry points above. Individual check
+scripts can also be run directly:
+
+```sh
+bash tools/lib/check_links.sh
+bash tools/lib/check_freshness.sh
+```
 
 Implementations of heavier logic called by the shell wrappers. You do not
 need to call these directly.
 
-| File                  | Language | Purpose                                       |
-| --------------------- | -------- | --------------------------------------------- |
-| `lib/chunk_file.py`   | Python   | Token-accurate chunking using tiktoken (stub) |
-| `lib/fetch_prompt.js` | Node.js  | Frontmatter parsing and remote fetch (stub)   |
+| File                        | Language | Purpose                                                         |
+| --------------------------- | -------- | --------------------------------------------------------------- |
+| `lib/check_frontmatter.sh`  | Shell    | Validates frontmatter fields and values in prompts and skills   |
+| `lib/check_atomicity.sh`    | Shell    | Checks dependency-map couplings are satisfied for changed files |
+| `lib/check_links.sh`        | Shell    | Verifies all internal markdown links resolve to real files      |
+| `lib/check_placeholders.sh` | Shell    | Detects unfilled `{{PLACEHOLDERS}}` and stray stub markers      |
+| `lib/check_freshness.sh`    | Shell    | Warns on expired or soon-expiring `review-by` dates             |
+| `lib/chunk_file.py`         | Python   | Token-accurate chunking using tiktoken (stub)                   |
+| `lib/fetch_prompt.js`       | Node.js  | Frontmatter parsing and remote fetch (stub)                     |
 
-These are stubs until the shell implementations need replacement with more
-accurate logic (e.g. using a real tokenizer instead of character estimation).
+The check scripts contain real, runnable logic and are called by both
+`validate.sh` and the CI workflows. The `chunk_file.py` and
+`fetch_prompt.js` files are stubs pending implementation.
 
 ---
 

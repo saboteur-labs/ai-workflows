@@ -13,7 +13,7 @@ compatibility: >
     Requires read access to the full repository. Proposal output is markdown
     text — no filesystem writes occur without explicit human approval.
 metadata:
-    author: your-org
+    author: saboteur-labs
     version: "1.0"
     context-budget: medium
     interfaces: ide, chat, cli, api

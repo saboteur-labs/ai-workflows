@@ -78,11 +78,14 @@ ai-workflows/
 │
 ├── skills/                         # Agent Skills (agentskills.io spec)
 │   ├── coding/                     # Implementation and debugging skills
-│   └── planning/                   # Spec writing and design skills
+│   ├── planning/                   # Spec writing and design skills
+│   └── repo-maintenance/           # Skills for maintaining this repo
 │
-├── templates/                      # Starter files for new prompts and skills
-│   ├── prompt-template.md
-│   └── skill-template.md
+├── templates/                      # Starter files for new content
+│   ├── prompt-template.md          # Template for all prompt files
+│   ├── skill-template.md           # Template for all skill directories
+│   ├── change-proposal-template.md # Required format for proposing changes
+│   └── structures/                 # Templates for guides, READMEs, examples, CHANGELOG
 │
 ├── examples/                       # Worked end-to-end workflow demos
 │   ├── spec-to-implementation/
@@ -137,14 +140,28 @@ for each interface.
 
 Contributions follow a simple convention:
 
-1. Use the appropriate template:
+1. **Propose first** — use
+   [`templates/change-proposal-template.md`](./templates/change-proposal-template.md)
+   to describe what you're adding and get approval before creating files.
+   AI agents working in this repo must follow this step — see
+   [`AGENTS.md`](./AGENTS.md).
+2. Use the appropriate template:
     - New prompt → [`templates/prompt-template.md`](./templates/prompt-template.md)
     - New skill → [`templates/skill-template.md`](./templates/skill-template.md)
-2. Fill in all frontmatter fields and replace all `{{PLACEHOLDERS}}`
-3. Add an entry to the index table in the relevant `README.md`
-4. Open a pull request — the frontmatter validator will run automatically
+    - New guide → [`templates/structures/guide-template.md`](./templates/structures/guide-template.md)
+    - New example step → [`templates/structures/example-step-template.md`](./templates/structures/example-step-template.md)
+3. Fill in all frontmatter fields and replace all `{{PLACEHOLDERS}}`
+4. Add an entry to the index table in the relevant `README.md`
+5. Add an entry to `CHANGELOG.md` under `[Unreleased]`
+6. Run local validation before pushing:
+    ```sh
+    ./tools/validate.sh --changed-only
+    ```
+7. Open a pull request — CI validators run automatically
 
-See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full contribution guide.
+See [`CONTRIBUTING.md`](./CONTRIBUTING.md) for the full contribution guide
+and [`guides/repo-maintenance/dependency-map.md`](./guides/repo-maintenance/dependency-map.md)
+for the complete list of files that must change together.
 
 ---
 

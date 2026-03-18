@@ -9,7 +9,7 @@ description: >
     accurate?", "check if this needs updating", or "review for staleness".
 license: MIT
 metadata:
-    author: your-org
+    author: saboteur-labs
     version: "1.0"
     context-budget: low
     interfaces: ide, chat, cli, api

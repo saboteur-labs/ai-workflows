@@ -40,6 +40,17 @@ New skill? Use [`../templates/skill-template.md`](../templates/skill-template.md
 | [`planning/spec-writer/`](./planning/spec-writer/)                 | low    | Write and refine feature specs through an iterative dialogue |
 | [`planning/spec-writer-minimal/`](./planning/spec-writer-minimal/) | low    | Low-context variant of spec-writer                           |
 
+## repo tools
+
+Skills for maintaining this repo itself. These are not copied into other
+projects — they are used in-place when working on this knowledge base.
+
+| Skill                                                      | Budget | Description                                                                     |
+| ---------------------------------------------------------- | ------ | ------------------------------------------------------------------------------- |
+| [`repo-maintenance/`](./repo-maintenance/)                 | medium | Maintain and extend this repo — propose changes, check atomicity, enforce style |
+| [`repo-maintenance-minimal/`](./repo-maintenance-minimal/) | low    | Low-context variant of repo-maintenance                                         |
+| [`freshness-check/`](./freshness-check/)                   | low    | Assess whether a file's external claims are likely still accurate               |
+
 ---
 
 ## Per-project reference files
