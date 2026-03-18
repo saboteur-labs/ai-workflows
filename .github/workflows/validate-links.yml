@@ -1,0 +1,17 @@
+name: Validate internal links
+
+on:
+    pull_request:
+        paths:
+            - "**/*.md"
+
+jobs:
+    links:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Run link check
+              run: |
+                  chmod +x tools/lib/check_links.sh
+                  bash tools/lib/check_links.sh
