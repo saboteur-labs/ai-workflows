@@ -75,13 +75,23 @@ metadata:
     version: "1.0"
     # context-budget: how much context this skill consumes.
     # low    — fits ~1k tokens; safe for small local models (7B)
-    # medium — uses ~2-4k tokens; fine for 13B+ local or any hosted
+    # medium — uses ~2–4k tokens; fine for 13B+ local or any hosted
     # high   — uses 4k+ tokens; use hosted or high-VRAM local models
     context-budget: low
     # interfaces: where this skill is designed to be injected.
     # Comma-separated list of: ide, chat, cli, api
     interfaces: ide, chat, cli, api
+    # review-by: optional — set for skills that reference external tools,
+    # CLI flags, or APIs that may change. Format: YYYY-MM-DD.
+    # CI will warn when this date passes. Omit for evergreen skills.
+    # review-by: YYYY-MM-DD
 
+
+# verified-against: optional — records sources for external claims.
+# verified-against:
+#   - url: https://...
+#     date: YYYY-MM-DD
+#     note: One sentence on what was verified
 
 # allowed-tools: space-delimited list of pre-approved tools.
 # Experimental — support varies by agent implementation.
@@ -284,6 +294,8 @@ is the low-context variant and link to the full version.
 - [ ] `context-budget` metadata reflects the actual token cost of `SKILL.md`
       body alone (not including task input)
 - [ ] `interfaces` metadata lists only interfaces that have been verified
+- [ ] `review-by` date set if skill references external tools or APIs
+- [ ] `verified-against` entries added for any externally-sourced claims
 - [ ] `SKILL.md` body is under 500 lines / 5,000 tokens
 - [ ] Anything only needed sometimes is in `references/` or `assets/` with
       explicit conditional load instructions in the body
@@ -293,4 +305,6 @@ is the low-context variant and link to the full version.
 - [ ] Low-context variant (`<name>-minimal/`) exists if `context-budget` is
       `medium` or `high`
 - [ ] Entry added to the parent `skills/README.md` index table
+- [ ] Entry added to `CHANGELOG.md` under `[Unreleased]`
 - [ ] Run `skills-ref validate ./<skill-name>` if the CLI is available
+- [ ] Change proposal submitted and approved before this directory was created

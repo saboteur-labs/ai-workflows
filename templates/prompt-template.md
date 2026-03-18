@@ -44,6 +44,26 @@ versions:
     - version: 1.0.0
       date: YYYY-MM-DD
       note: Initial version
+
+
+# ------------------------------------------------------------
+# review-by: optional — set for prompts that reference external
+# tools, CLI flags, or library APIs that may change over time.
+# Format: YYYY-MM-DD. CI will warn when this date has passed.
+#   6–12 months for tool-specific content
+#   18–24 months for stable conventions
+# Omit entirely for prompts with no external dependencies.
+# ------------------------------------------------------------
+# review-by: YYYY-MM-DD
+
+# ------------------------------------------------------------
+# verified-against: optional — records sources for any external
+# claims in this prompt (tool behaviour, spec requirements, etc.)
+# ------------------------------------------------------------
+# verified-against:
+#   - url: https://...
+#     date: YYYY-MM-DD
+#     note: One sentence on what was verified
 ---
 ```
 
@@ -131,5 +151,9 @@ N/A
 - [ ] `interfaces` list has been verified — not just assumed
 - [ ] All `{{PLACEHOLDERS}}` are documented in the Placeholders table
 - [ ] Low-context variant is present if `context_budget` is `medium` or `high`
+- [ ] `review-by` date set if prompt references external tools or APIs
+- [ ] `verified-against` entries added for any externally-sourced claims
 - [ ] File is named in `kebab-case` and placed in the correct category folder
 - [ ] Entry added to the parent `README.md` index table
+- [ ] Entry added to `CHANGELOG.md` under `[Unreleased]`
+- [ ] Change proposal submitted and approved before this file was created
