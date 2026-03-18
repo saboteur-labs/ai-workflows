@@ -34,7 +34,7 @@ the clipboard, or install a skill into your project.
 ./tools/fetch-prompt.sh --list --skill
 
 # Fetch from remote (without cloning the repo)
-./tools/fetch-prompt.sh --remote https://raw.githubusercontent.com/your-org/ai-workflows/main \
+./tools/fetch-prompt.sh --remote https://raw.githubusercontent.com/saboteur-labs/ai-workflows/main \
   code/generate-unit-tests
 ```
 

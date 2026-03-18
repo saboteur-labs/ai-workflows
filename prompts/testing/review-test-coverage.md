@@ -6,7 +6,7 @@ context_budget: medium
 interfaces: [ide, chat, cli, api]
 versions:
     - version: 1.0.0
-      date: 2025-03-17
+      date: 2026-03-17
       note: Initial version
 ---
 

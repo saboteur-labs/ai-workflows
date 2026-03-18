@@ -13,7 +13,7 @@ compatibility: >
     required. If the project has a test runner or linter, having them available
     improves the skill's ability to verify fixes.
 metadata:
-    author: your-org
+    author: saboteur-labs
     version: "1.0"
     context-budget: low
     interfaces: ide, chat, cli, api

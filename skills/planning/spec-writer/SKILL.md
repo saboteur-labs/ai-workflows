@@ -9,7 +9,7 @@ description: >
     feature", "what should we build?", or "turn this idea into a spec".
 license: MIT
 metadata:
-    author: your-org
+    author: saboteur-labs
     version: "1.0"
     context-budget: low
     interfaces: ide, chat, cli, api

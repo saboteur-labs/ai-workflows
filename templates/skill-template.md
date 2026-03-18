@@ -71,7 +71,7 @@ compatibility: Requires git and Node.js >= 18
 # Use this for anything not covered by the spec fields above.
 # Prefix custom keys to avoid conflicts (e.g. "org-key").
 metadata:
-    author: your-org
+    author: saboteur-labs
     version: "1.0"
     # context-budget: how much context this skill consumes.
     # low    — fits ~1k tokens; safe for small local models (7B)

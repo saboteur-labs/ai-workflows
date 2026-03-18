@@ -7,7 +7,7 @@ description: >
     Use the full implement-feature skill when your context window allows.
 license: MIT
 metadata:
-    author: your-org
+    author: saboteur-labs
     version: "1.0"
     context-budget: low
     interfaces: ide, chat, cli, api

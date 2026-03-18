@@ -26,7 +26,7 @@
 #   fetch-prompt.sh --copy planning/write-feature-spec
 #   fetch-prompt.sh --install-skill coding/implement-feature
 #   fetch-prompt.sh --list code
-#   fetch-prompt.sh --remote https://raw.githubusercontent.com/your-org/ai-workflows/main \
+#   fetch-prompt.sh --remote https://raw.githubusercontent.com/saboteur-labs/ai-workflows/main \
 #     code/generate-unit-tests
 
 set -euo pipefail
