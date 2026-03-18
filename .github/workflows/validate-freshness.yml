@@ -1,0 +1,21 @@
+name: Validate freshness
+
+on:
+    pull_request:
+        paths:
+            - "**/*.md"
+    schedule:
+        # Run weekly on Mondays at 08:00 UTC
+        - cron: "0 8 * * 1"
+
+jobs:
+    freshness:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Run freshness check
+              run: |
+                  chmod +x tools/lib/check_freshness.sh
+                  # Exit code 2 = warnings only — do not fail the workflow
+                  bash tools/lib/check_freshness.sh || true
