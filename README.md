@@ -57,6 +57,27 @@ you're working on. There are no dependencies to install and nothing to link.
 
 See [`tools/README.md`](./tools/README.md) for full usage.
 
+**Installing prompts into another repo:**
+
+Run the build script to compile prompts into IDE-ready formats, then copy
+the output into your project:
+
+```sh
+node scripts/build-dist.js
+
+# GitHub Copilot (.github/prompts/)
+cp -r dist/copilot/* /path/to/repo/.github/prompts/
+
+# Claude Code (.claude/commands/)
+cp -r dist/claude/* /path/to/repo/.claude/commands/
+```
+
+The script reads all prompt files, extracts the `## Prompt` code block from
+each, and writes two output trees under `dist/`: one formatted for Copilot
+(with the required `mode: agent` frontmatter) and one for Claude Code slash
+commands (plain markdown, no frontmatter). Prompts missing a `title` field
+or a `## Prompt` block are skipped with a warning.
+
 ---
 
 ## Repository structure
@@ -90,6 +111,9 @@ ai-workflows/
 ├── examples/                       # Worked end-to-end workflow demos
 │   ├── spec-to-implementation/
 │   └── low-context-chunked-review/
+│
+├── scripts/                        # Build and distribution scripts
+│   └── build-dist.js               # Compiles prompts → dist/ for Copilot and Claude Code
 │
 └── tools/                          # Shell scripts and utilities
     ├── fetch-prompt.sh

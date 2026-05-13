@@ -12,6 +12,43 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ## [Unreleased]
 
+### Added
+
+- `prompts/code/audit-unused-code.md` — identifies unused imports, exports,
+  functions, types, dead code paths, and unused dependencies across a
+  codebase; produces a prioritised removal list for human or agent-driven
+  cleanup
+- `prompts/planning/ideate-project.md` — interactive ideation prompt that
+  turns a bare-bones idea into a structured concept document; includes
+  competitive landscape, caveats, and iteration support via Mode B
+- `prompts/planning/write-product-spec.md` — expands a concept document from
+  `ideate-project.md` into a milestone-organized product spec with testable
+  requirements, user personas, and constraints derived from the concept's
+  caveats
+- `prompts/code/audit-codebase-structure.md` — analyses file and folder
+  structure for empty directories, dead modules, misplaced files, excess
+  depth, test organisation issues, and naming inconsistencies; produces a
+  prioritised change list suitable for direct input to a restructuring session
+- `prompts/code/extract-reusable-react-components.md` — scans React component
+  files for duplicated JSX structure, repeated layout wrappers, shared
+  conditional rendering patterns, and tightly coupled fragments; produces a
+  prioritised extraction list with suggested component names and props
+- `prompts/planning/surface-architecture-decisions.md` — multi-phase
+  facilitation prompt that discovers explicit and implicit architectural
+  decisions in a codebase, confirms intent with the user, gathers context,
+  and hands off to `write-adr` with all required fields pre-filled
+- `scripts/build-dist.js` — compiles all prompts into IDE-ready distribution
+  formats under `dist/`: Copilot (`.github/prompts/`) and Claude Code
+  (`.claude/commands/`); skips files missing `title` frontmatter or a
+  `## Prompt` block
+
+### Changed
+
+- `prompts/planning/write-adr.md` (v1.1.0) — added interactive file-output
+  step: after generating the ADR, prompts the user to write it to a file;
+  auto-detects the ADR directory and proposes the next sequential filename;
+  added cross-reference to `surface-architecture-decisions.md`
+
 ---
 
 ## [1.0.0] — 2026-03-18
