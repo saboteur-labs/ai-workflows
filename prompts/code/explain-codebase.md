@@ -1,5 +1,6 @@
 ---
 title: Explain a codebase or file
+description: Produce a plain-language explanation of what a codebase, file, or unit does and how it fits together. Use to onboard onto unfamiliar code or to document existing behaviour.
 category: code
 tags: [explain, understand, onboarding, documentation, exploration]
 context_budget: medium

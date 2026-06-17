@@ -1,5 +1,6 @@
 ---
 title: Generate test cases for a feature or function
+description: Generate a list of test cases (descriptions, not code) for a feature or function, covering normal, edge, and failure paths. Use to plan coverage before writing tests.
 category: testing
 tags: [test-cases, testing, qa, acceptance-criteria, given-when-then]
 context_budget: low

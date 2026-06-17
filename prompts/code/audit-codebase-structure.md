@@ -1,5 +1,6 @@
 ---
 title: Audit codebase structure for navigability
+description: Audit a codebase's file and folder structure for navigability problems and produce a prioritised list of changes. Use when a project has grown hard to navigate and you want concrete reorganisation steps.
 category: code
 tags: [audit, structure, organization, dead-code, refactor, files, folders]
 context_budget: high

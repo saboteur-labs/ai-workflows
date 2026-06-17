@@ -1,5 +1,6 @@
 ---
 title: Write an Architecture Decision Record
+description: Document an architectural decision as an ADR — context, the decision, the options considered, and consequences. Use to capture a significant technical decision in a durable, reviewable record.
 category: planning
 tags: [adr, architecture, decision, documentation, design, trade-offs]
 context_budget: low

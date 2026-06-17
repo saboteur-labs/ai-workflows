@@ -1,5 +1,7 @@
 ---
 title: Ideate a project
+description: Develop a rough project idea into a structured concept document through a short interactive question phase — problem, audience, core concept, milestones, competitive landscape, risks, and open questions. Use before writing any spec; can also iterate on a prior concept. Not for architectural decisions on an existing system.
+skill-saves-document: true
 category: planning
 tags: [ideation, brainstorming, concept, product, planning, competition]
 context_budget: medium
@@ -351,3 +353,17 @@ Keep the document under 800 words.
   [`planning/write-feature-spec.md`](./write-feature-spec.md),
   [`planning/break-into-tasks.md`](./break-into-tasks.md),
   [`planning/estimate-complexity.md`](./estimate-complexity.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `IDEA`: the project idea the user described — in this conversation or a brief they provide
+- `PREVIOUS_OUTPUT`: a concept document from a previous ideation session
+- `ITERATION_DIRECTION`: what the user wants changed or explored in that previous concept
+
+## Skill wrap-up
+
+When the concept document is ready, offer the natural next step: expand it into a
+full product spec with `/saboteur-write-product-spec`, or — for a single feature
+rather than a whole product — a feature spec with `/saboteur-write-feature-spec`.

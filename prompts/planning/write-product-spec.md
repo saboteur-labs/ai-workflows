@@ -1,5 +1,7 @@
 ---
 title: Write a product spec from a concept document
+description: Expand a structured concept document into a full product spec — milestone-organised functional requirements, user personas, constraints, and tracked open questions. Use after ideate-project and before breaking work into features or tasks. For a single feature, use write-feature-spec instead.
+skill-saves-document: true
 category: planning
 tags: [spec, planning, requirements, product, milestones, design-doc]
 context_budget: medium
@@ -256,9 +258,30 @@ Keep the spec under 1000 words.
   detail, or conversely too abstract to be testable).
 - The output of this prompt is the natural input for:
   [`planning/break-into-tasks.md`](./break-into-tasks.md) (task breakdown) and
-  [`planning/estimate-complexity.md`](./estimate-complexity.md) (effort sizing)
+  [`planning/estimate-complexity.md`](./estimate-complexity.md) (effort sizing).
+  To split the spec into independently shippable, branch-sized units first,
+  run [`planning/break-into-features.md`](./break-into-features.md) and then
+  break each feature into tasks separately.
 - Related prompts:
   [`planning/ideate-project.md`](./ideate-project.md),
   [`planning/write-feature-spec.md`](./write-feature-spec.md),
+  [`planning/break-into-features.md`](./break-into-features.md),
   [`planning/break-into-tasks.md`](./break-into-tasks.md),
   [`planning/estimate-complexity.md`](./estimate-complexity.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `CONCEPT_DOCUMENT`: the concept document from this conversation or a file the user references
+- `MILESTONE_SCOPE`: a milestone scope
+
+## Skill wrap-up
+
+1. If the spec has open questions that block core requirements, resolve them
+   interactively before saving: for each, present 3–5 options with brief pros and
+   cons, and wait for the user to choose (they may defer any). Update the spec
+   with the resolutions.
+2. After the spec is saved, offer the natural next step: split it into
+   independently shippable features with `/saboteur-break-into-features`, or break
+   it straight into tasks with `/saboteur-break-into-tasks`.

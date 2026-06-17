@@ -1,5 +1,6 @@
 ---
 title: Summarize session state for handoff
+description: Summarize the current session's state — what was done, what's left, and key context — for handoff to a new session or agent. Use before a context reset or when delegating continued work.
 category: agent-orchestration
 tags: [handoff, summary, context, session, pipeline, continuity]
 context_budget: low

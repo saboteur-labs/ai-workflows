@@ -1,5 +1,6 @@
 ---
 title: Review test coverage and quality
+description: Review an existing test suite for coverage gaps and test-quality issues. Use to find what is untested or weakly tested before relying on a suite.
 category: testing
 tags: [test-review, coverage, quality, gaps, assertions]
 context_budget: medium

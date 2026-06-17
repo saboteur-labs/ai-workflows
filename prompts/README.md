@@ -13,6 +13,23 @@ directly into a chat, IDE, CLI, or API call.
 
 New prompt? Copy [`../templates/prompt-template.md`](../templates/prompt-template.md).
 
+## Compiling to Copilot prompts and Claude skills
+
+`node scripts/build-dist.js` compiles every prompt into ready-to-install formats
+under `dist/` (the directory is regenerated on each run):
+
+- **GitHub Copilot** — `dist/copilot/<category>/<name>.prompt.md`. Install with
+  `cp -r dist/copilot/* /path/to/repo/.github/prompts/`.
+- **Claude Code skills** — `dist/claude/skills/saboteur-<name>/SKILL.md`, namespaced
+  under `saboteur-` and invocable as `/saboteur-<name>` (or auto-triggered from the
+  `description`). Install with `cp -r dist/claude/skills/* /path/to/repo/.claude/skills/`
+  (or `~/.claude/skills/` for personal use).
+
+A prompt compiles to a skill only if its frontmatter has a `description`. The skill
+body is derived from the `## Prompt` block, with placeholders rewritten into
+natural-language instructions; see the template for the optional `## Skill inputs`,
+`## Skill wrap-up`, and `## Skill body` sections and the `skill-saves-document` flag.
+
 ---
 
 ## code/
@@ -35,6 +52,7 @@ New prompt? Copy [`../templates/prompt-template.md`](../templates/prompt-templat
 | [`planning/ideate-project.md`](./planning/ideate-project.md)           | medium | Develop a bare-bones idea into a structured concept with competitive analysis |
 | [`planning/write-product-spec.md`](./planning/write-product-spec.md)   | medium | Expand a concept document into a milestone-organized product spec             |
 | [`planning/write-feature-spec.md`](./planning/write-feature-spec.md)   | low    | Turn a rough idea into a structured feature spec                 |
+| [`planning/break-into-features.md`](./planning/break-into-features.md) | medium | Break a product spec into independently shippable vertical-slice features |
 | [`planning/break-into-tasks.md`](./planning/break-into-tasks.md)       | low    | Break a spec into a prioritised, estimated task list             |
 | [`planning/write-adr.md`](./planning/write-adr.md)                                                         | low    | Document an architectural decision with context and consequences                      |
 | [`planning/surface-architecture-decisions.md`](./planning/surface-architecture-decisions.md)               | high   | Discover and confirm implicit/explicit architecture decisions in a codebase, then hand off to write-adr |

@@ -1,5 +1,6 @@
 ---
 title: Generate unit tests for a module
+description: Generate a unit test suite for a module, covering its main behaviours and edge cases. Use after writing or changing a unit to add focused test coverage.
 category: code
 tags: [unit-test, testing, jest, pytest, vitest, mocha]
 context_budget: medium

@@ -1,5 +1,6 @@
 ---
 title: Write an end-to-end test scenario
+description: Write an end-to-end test scenario — in plain language or as test code — from a feature description or acceptance criteria. Use to define how a user-facing flow should be verified.
 category: testing
 tags: [e2e, integration, scenario, playwright, cypress, acceptance-test]
 context_budget: low
@@ -115,3 +116,46 @@ This prompt is already `context_budget: low`. No low-context variant needed.
   [`testing/generate-test-cases.md`](./generate-test-cases.md),
   [`code/generate-unit-tests.md`](../code/generate-unit-tests.md),
   [`planning/write-feature-spec.md`](../planning/write-feature-spec.md)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since the output
+format is selected with expression conditionals the transform doesn't handle).
+
+```
+Write an end-to-end test scenario for the feature the user wants tested — from
+this conversation, or a description or file they provide. If the user gave
+acceptance criteria, test against them.
+
+If the desired output format isn't clear, ask: a plain-language scenario, or
+test code in a named framework (e.g. Playwright TypeScript, Cypress JavaScript,
+Playwright Python). Write plain language first to validate the scenario logic
+before producing code, unless the user asked directly for code.
+
+If producing a plain-language scenario, use this structure:
+
+### Scenario: [descriptive name]
+**Given** [initial state / preconditions]
+**When** [user action(s)]
+**Then** [expected outcomes — one per bullet]
+
+**Edge cases to also test:**
+- [brief description of each variant or error path]
+
+Cover:
+1. The primary happy path — the user successfully completes the intended action
+2. At least one validation or error path — the user does something invalid and
+   receives appropriate feedback
+3. Any state changes that should persist after the action completes
+
+If producing test code in the chosen framework:
+- One describe block for the feature
+- One test per scenario (happy path + each error path)
+- Use data-testid selectors where possible — not CSS classes or XPath
+- Assertions must verify observable outcomes (page content, URL, network
+  requests), not implementation details
+- Include setup and teardown if state needs to be seeded or cleaned
+- Add a comment above each test with the scenario name in plain language
+- Assume the app runs at the base URL the user gives (default:
+  http://localhost:3000)
+```

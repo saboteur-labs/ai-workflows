@@ -1,5 +1,7 @@
 ---
 title: Write a feature spec
+description: Produce a structured feature specification from a rough idea or brief — overview, goals, non-goals, user stories, testable requirements, and open questions. Use at the start of a feature to turn an idea into a reviewable spec before task breakdown. For a whole product across milestones, use write-product-spec instead.
+skill-saves-document: true
 category: planning
 tags: [spec, planning, requirements, feature, design-doc]
 context_budget: low
@@ -142,3 +144,20 @@ Then paste the summary as `{{EXISTING_CONTEXT}}`.
   [`planning/break-into-tasks.md`](./break-into-tasks.md),
   [`planning/write-adr.md`](./write-adr.md),
   [`planning/estimate-complexity.md`](./estimate-complexity.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `FEATURE_DESCRIPTION`: the feature the user wants specced — from this conversation, or a description or file they provide
+- `EXISTING_CONTEXT`: additional context such as existing behaviour, constraints, or prior decisions
+
+## Skill wrap-up
+
+1. If the spec has open questions, resolve them interactively before saving: for
+   each open question, present 3–5 options with brief pros and cons, and wait for
+   the user to choose (they may defer any question). Update the spec with the
+   resolutions.
+2. After the spec is saved, offer the natural next step: break it into
+   implementation tasks with `/saboteur-break-into-tasks`, or revise the spec
+   first.

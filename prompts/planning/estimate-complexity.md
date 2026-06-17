@@ -1,5 +1,6 @@
 ---
 title: Estimate complexity and risk
+description: Estimate the complexity and risk of a piece of work, surfacing unknowns and risk factors. Use to size effort before committing to a task or feature.
 category: planning
 tags: [estimation, complexity, risk, sizing, planning, effort]
 context_budget: low

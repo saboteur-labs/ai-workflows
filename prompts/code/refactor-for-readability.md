@@ -1,5 +1,6 @@
 ---
 title: Refactor code for readability
+description: Refactor a code block to improve clarity, naming, and structure without changing observable behaviour, explaining each change so the diff can be validated. Use when code is correct but hard to read — after a first-pass implementation, or before review or handoff. Not for fixing bugs or changing behaviour.
 category: code
 tags: [refactor, readability, clean-code, naming, structure]
 context_budget: medium
@@ -112,3 +113,43 @@ Output the refactored code, then a bullet list of changes made.
   [`code/scaffold-module.md`](./scaffold-module.md)
 - Related skills:
   [`skills/coding/implement-feature/`](../../skills/coding/implement-feature/)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since the code comes
+from context rather than a pasted fenced block).
+
+```
+Refactor the code the user wants improved — from this conversation, a file they
+reference, or their current selection — for readability, without changing its
+observable behaviour.
+
+Rules:
+1. Do not change observable behaviour. The refactored code must produce
+   identical outputs for all inputs.
+2. Do not add or remove functionality.
+3. Follow any project-specific constraints the user gives (for example, do not
+   rename exported functions, types, or serialised keys). Otherwise, match the
+   naming and structural patterns of the surrounding codebase.
+
+Apply improvements in these areas where relevant:
+- Naming: rename variables, functions, and parameters to clearly express
+  intent. Prefer specific names over generic ones (e.g. `userId` over `id`,
+  `parseIsoDate` over `parse`).
+- Function size: extract logic into named helper functions if a function
+  exceeds ~30 lines or handles more than one distinct concern.
+- Nesting: reduce nesting depth using early returns, guard clauses, or
+  extracted functions. Maximum 3 levels of nesting.
+- Comments: remove comments that restate what the code does. Keep comments
+  that explain why a non-obvious decision was made.
+- Consistency: apply naming and structural patterns consistently within the file.
+
+Output format:
+1. The complete refactored code.
+2. A changelog listing each change made and why, in the format:
+   - **[type]** description of change and readability benefit
+   where [type] is one of: naming, extraction, nesting, comments,
+   consistency, or structure.
+
+If no meaningful improvements are possible, say so and briefly explain why.
+```

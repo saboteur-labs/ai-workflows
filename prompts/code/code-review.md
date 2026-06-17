@@ -1,5 +1,6 @@
 ---
 title: Review code for quality and correctness
+description: Review code for quality, correctness, and adherence to conventions, returning prioritised findings. Use to review a diff, file, or snippet before merging or handoff.
 category: code
 tags: [code-review, quality, conventions, bugs, security]
 context_budget: medium

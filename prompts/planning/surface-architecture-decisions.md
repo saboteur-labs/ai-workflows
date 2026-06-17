@@ -1,5 +1,6 @@
 ---
 title: Surface architecture decisions
+description: Discover and confirm the implicit and explicit architecture decisions embedded in a codebase, then hand off to write-adr to document them. Use when a project's key decisions are undocumented.
 category: planning
 tags: [architecture, adr, discovery, decisions, documentation]
 context_budget: high

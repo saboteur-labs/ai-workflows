@@ -1,5 +1,6 @@
 ---
 title: Decompose a complex task into sub-tasks
+description: Break a complex task into independently executable sub-tasks with clear inputs, outputs, and dependencies. Use when a task is too large for one session and needs splitting before work or delegation begins.
 category: agent-orchestration
 tags: [decompose, planning, agent, orchestration, subtasks, pipeline]
 context_budget: low

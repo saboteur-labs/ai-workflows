@@ -1,5 +1,6 @@
 ---
 title: Audit codebase for unused code
+description: Audit a codebase for unused imports, exports, functions, types, and dependencies. Use to find dead code that is safe to remove before a cleanup or refactor.
 category: code
 tags: [audit, dead-code, unused, cleanup, refactor, imports, dependencies]
 context_budget: high

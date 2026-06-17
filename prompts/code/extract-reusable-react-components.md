@@ -1,5 +1,6 @@
 ---
 title: Extract reusable React components
+description: Identify duplicated JSX patterns in React component files and propose reusable component extractions. Use when component code has grown repetitive and you want concrete extraction candidates.
 category: code
 tags: [react, components, refactor, reusability, duplication, design-system]
 context_budget: high

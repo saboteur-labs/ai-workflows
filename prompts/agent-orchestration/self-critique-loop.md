@@ -1,5 +1,6 @@
 ---
 title: Self-critique and improve output
+description: Have the model critique its own output against the original requirements and produce an improved version. Use to raise the quality of a draft, answer, or artifact before finalising it.
 category: agent-orchestration
 tags: [critique, review, quality, self-improvement, iteration, validation]
 context_budget: low

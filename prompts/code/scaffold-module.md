@@ -1,5 +1,6 @@
 ---
 title: Scaffold a new module
+description: Scaffold a new module that matches the project's existing conventions and structure. Use when starting a new module and you want boilerplate consistent with the codebase.
 category: code
 tags: [scaffold, boilerplate, module, structure, conventions]
 context_budget: low
