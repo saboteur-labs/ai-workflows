@@ -40,6 +40,14 @@ New skill? Use [`../templates/skill-template.md`](../templates/skill-template.md
 | [`planning/spec-writer/`](./planning/spec-writer/)                 | low    | Write and refine feature specs through an iterative dialogue |
 | [`planning/spec-writer-minimal/`](./planning/spec-writer-minimal/) | low    | Low-context variant of spec-writer                           |
 
+## agents/
+
+Skills for working on the user's own subagents.
+
+| Skill                                  | Budget | Description                                                                       |
+| -------------------------------------- | ------ | --------------------------------------------------------------------------------- |
+| [`improve-agent/`](./improve-agent/)   | medium | Continuously improve a user-created agent by learning from how it actually runs   |
+
 ## repo tools
 
 Skills for maintaining this repo itself. These are not copied into other
