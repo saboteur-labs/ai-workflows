@@ -30,6 +30,15 @@ body is derived from the `## Prompt` block, with placeholders rewritten into
 natural-language instructions; see the template for the optional `## Skill inputs`,
 `## Skill wrap-up`, and `## Skill body` sections and the `skill-saves-document` flag.
 
+To keep installed skills tracking this repo instead of copying them, **symlink**
+each one into your skills directory — e.g.
+`ln -s "$PWD/dist/claude/skills/saboteur-break-into-tasks" ~/.claude/skills/`.
+Two caveats: `dist/` is git-ignored, and each build wipes and regenerates it — so
+after pulling changes, re-run `node scripts/build-dist.js` for symlinked skills to
+pick them up. Skip skills that duplicate a Claude Code built-in (e.g. `code-review`)
+or are framework-specific (e.g. `extract-reusable-react-components`, better scoped
+to the relevant project's `.claude/skills/`).
+
 ---
 
 ## code/
