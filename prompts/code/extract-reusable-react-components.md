@@ -230,3 +230,11 @@ End with a flat prioritised list of extractions, highest-impact first.
   [`code/audit-codebase-structure.md`](./audit-codebase-structure.md),
   [`code/refactor-for-readability.md`](./refactor-for-readability.md),
   [`planning/break-into-tasks.md`](../planning/break-into-tasks.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `SCOPE`: the directory or files to analyse
+- `EXISTING_COMPONENTS`: components already in a shared library (to avoid duplicate recommendations)
+- `ADDITIONAL_CONTEXT`: tech stack or design-system conventions

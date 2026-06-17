@@ -114,3 +114,11 @@ This prompt is already `context_budget: low`. No low-context variant needed.
   [`code/generate-unit-tests.md`](../code/generate-unit-tests.md),
   [`testing/review-test-coverage.md`](./review-test-coverage.md),
   [`testing/write-e2e-scenario.md`](./write-e2e-scenario.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `INPUT_TYPE`: what the cases are for — a function, feature, API endpoint, or acceptance criteria
+- `INPUT`: the spec, function signature, or description — from this conversation or a file the user references
+- `FORMAT`: the output format for the cases (default: a numbered list)

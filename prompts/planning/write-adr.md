@@ -168,3 +168,13 @@ This prompt is already `context_budget: low`. No low-context variant needed.
   [`planning/write-feature-spec.md`](./write-feature-spec.md),
   [`planning/estimate-complexity.md`](./estimate-complexity.md),
   [`planning/surface-architecture-decisions.md`](./surface-architecture-decisions.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `DECISION`: the decision made, in plain language
+- `DECISION_TITLE`: a short title for the ADR heading
+- `DATE`: today's date
+- `CONTEXT`: the background — why the decision was necessary and what constraints existed
+- `OPTIONS`: the options that were considered

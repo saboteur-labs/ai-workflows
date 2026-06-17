@@ -120,3 +120,33 @@ Output the test file only, with imports.
   [`testing/generate-test-cases.md`](../testing/generate-test-cases.md)
 - Related skills:
   [`skills/coding/implement-feature/`](../../skills/coding/implement-feature/)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since the source code
+comes from context rather than a pasted fenced block).
+
+```
+Generate unit tests for the source the user wants tested — from this conversation,
+a file, or the current selection. Infer the language from the code, and use the
+test framework the user named (or the one the project already uses).
+
+Generate a complete unit test file that:
+
+1. Covers all exported functions and classes
+2. Tests the happy path for each function
+3. Tests edge cases: empty inputs, null/undefined, boundary values, type coercion
+   where relevant
+4. Tests failure modes: invalid inputs, thrown errors, rejected promises
+5. Uses mocks/stubs only where the code has genuine external dependencies (network
+   calls, file system, database). Do not mock internal logic.
+6. Groups related tests in describe blocks named after the function or class being
+   tested
+7. Uses descriptive test names in the format:
+   "[function name] [condition] [expected outcome]"
+   e.g. "parseDate returns null when given an empty string"
+
+Output the complete test file only. No explanations outside the file. Include
+import statements. Assume the test file lives at the same directory level as the
+source file. Follow any project-specific testing conventions the user gave.
+```

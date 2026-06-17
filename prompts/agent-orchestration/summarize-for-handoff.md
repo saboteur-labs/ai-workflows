@@ -131,3 +131,10 @@ Review 2: {{REVIEW_2}}
 - Related guides:
   [`guides/agent-patterns/multi-agent-orchestration.md`](../../guides/agent-patterns/multi-agent-orchestration.md),
   [`guides/agent-patterns/single-agent.md`](../../guides/agent-patterns/single-agent.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `SESSION_CONTEXT`: the conversation or work to summarise
+- `NEXT_TASK`: what the next session or agent will be doing

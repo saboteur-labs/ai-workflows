@@ -231,3 +231,11 @@ anything that requires dynamic-usage verification before deletion.
   [`code/refactor-for-readability.md`](./refactor-for-readability.md),
   [`planning/break-into-tasks.md`](../planning/break-into-tasks.md),
   [`agent-orchestration/summarize-for-handoff.md`](../agent-orchestration/summarize-for-handoff.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `SCOPE`: the directory or project to audit, or the entire codebase
+- `ENTRY_POINTS`: known entry points to treat as roots
+- `ADDITIONAL_CONTEXT`: stack quirks, dynamic patterns, or public API surface to protect

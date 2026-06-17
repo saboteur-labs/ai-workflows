@@ -122,3 +122,11 @@ coverage`, `adherence to the type constraints in the requirements`.
   [`agent-orchestration/summarize-for-handoff.md`](./summarize-for-handoff.md)
 - Related guides:
   [`guides/agent-patterns/human-in-the-loop.md`](../../guides/agent-patterns/human-in-the-loop.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `REQUIREMENTS`: the original prompt, spec, or acceptance criteria the output should meet
+- `ORIGINAL_OUTPUT`: the output to critique — from this conversation or a file the user references
+- `FOCUS`: a specific aspect to focus the critique on

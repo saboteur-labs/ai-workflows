@@ -118,3 +118,39 @@ bodies that throw NotImplementedError. Include a test file scaffold.
   [`code/generate-unit-tests.md`](./generate-unit-tests.md)
 - Related skills:
   [`skills/coding/implement-feature/`](../../skills/coding/implement-feature/)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since inputs and any
+example module come from context rather than pasted values and fenced blocks).
+
+```
+Scaffold a new module. Use the module name and language/framework the user gave
+(infer the language from the project if unstated). The module's purpose is what
+the user described.
+
+If the user pointed to an existing similar module, follow its structure and
+conventions. Otherwise match the conventions of the surrounding codebase, plus
+any conventions the user specified.
+
+Generate the following:
+1. File list — the files that make up this module and what each contains
+2. Each file's complete scaffold — imports, type definitions, exported
+   function/class signatures with placeholder bodies, and any boilerplate that
+   every file of this type requires
+
+Placeholder body format:
+- Functions should throw a NotImplementedError (or language equivalent) with the
+  message: "[module name]: [function name] not yet implemented"
+- Do not write any logic — only structure, types, and signatures
+
+Also include:
+- A test file scaffold with one describe block per exported function, each
+  containing a single placeholder test:
+  it('TODO: [function name]', () => { expect(true).toBe(true) })
+- Any index/barrel file needed to export the module's public API
+
+Output each file as:
+### path/to/filename.ext
+[file contents]
+```

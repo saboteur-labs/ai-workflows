@@ -212,3 +212,10 @@ End with a flat prioritised list of changes, highest-impact first.
   [`code/code-review.md`](./code-review.md),
   [`planning/break-into-tasks.md`](../planning/break-into-tasks.md),
   [`agent-orchestration/summarize-for-handoff.md`](../agent-orchestration/summarize-for-handoff.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `SCOPE`: the directory to audit, or the entire codebase
+- `ADDITIONAL_CONTEXT`: tech stack, team conventions, or known constraints

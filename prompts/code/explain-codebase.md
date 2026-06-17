@@ -114,3 +114,42 @@ important to know before modifying it. Plain language, no jargon.
 - Related prompts:
   [`code/code-review.md`](./code-review.md),
   [`agent-orchestration/summarize-for-handoff.md`](../agent-orchestration/summarize-for-handoff.md)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since the code comes
+from context rather than a pasted fenced block).
+
+```
+Explain the code the user wants understood — a file, module, service, component,
+or function from this conversation, a file, or the current selection. Infer the
+language from the code. Pitch the explanation for the audience the user named, or
+a developer unfamiliar with the codebase by default, at the depth they asked for
+(default: a detailed explanation of the logic and decisions).
+
+Structure your explanation as follows:
+
+## Purpose
+One paragraph. What does this code do and what problem does it solve? Do not
+describe the implementation yet — only the what and why.
+
+## Key components
+A bullet list of the main functions, classes, or sections. For each:
+- Name and signature (for functions/methods)
+- What it does in one sentence
+- Any important side effects, dependencies, or constraints to be aware of
+
+## How it works
+A narrative explanation of the main flow or logic. Describe what happens from the
+entry point to the output. Use plain language — avoid restating the code
+line-by-line. Focus on the decisions and patterns, not the syntax.
+
+## Dependencies and interfaces
+- What does this code depend on (imports, external services, config)?
+- What does it export or expose to callers?
+- What assumptions does it make about its inputs?
+
+## Things to know before modifying
+Gotchas, non-obvious constraints, or important context that someone would need
+before making changes. If nothing non-obvious exists, write "None identified."
+```

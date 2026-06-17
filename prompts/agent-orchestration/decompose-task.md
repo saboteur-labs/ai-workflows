@@ -107,3 +107,10 @@ This prompt is already `context_budget: low`. No low-context variant needed.
   [`planning/break-into-tasks.md`](../planning/break-into-tasks.md),
   [`agent-orchestration/summarize-for-handoff.md`](./summarize-for-handoff.md),
   [`planning/write-feature-spec.md`](../planning/write-feature-spec.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `TASK`: the task to decompose — from this conversation or a description the user provides
+- `CONSTRAINTS`: any constraints on the decomposition (default: sub-tasks must be executable sequentially, each completable in one session; minimise the number of sub-tasks)

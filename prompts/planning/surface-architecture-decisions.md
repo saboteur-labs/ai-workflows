@@ -339,3 +339,10 @@ Rules:
 - Related prompts:
   [`planning/write-adr.md`](./write-adr.md),
   [`code/audit-codebase-structure.md`](../code/audit-codebase-structure.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `SCOPE`: a subsystem, directory, or concern to narrow the analysis to
+- `EXISTING_ADRS`: already-documented decision titles to exclude from discovery
