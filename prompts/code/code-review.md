@@ -1,5 +1,6 @@
 ---
 title: Review code for quality and correctness
+description: Review code for quality, correctness, and adherence to conventions, returning prioritised findings. Use to review a diff, file, or snippet before merging or handoff.
 category: code
 tags: [code-review, quality, conventions, bugs, security]
 context_budget: medium
@@ -130,3 +131,52 @@ suggested fix. End with a one-sentence summary of the most critical issue.
 - Related skills:
   [`skills/coding/debug-issue/`](../../skills/coding/debug-issue/),
   [`skills/coding/implement-feature/`](../../skills/coding/implement-feature/)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since the code comes
+from context rather than a pasted fenced block).
+
+```
+Review the code the user wants checked — a file, a diff, or a function from this
+conversation, a file, or the current selection — for quality and correctness.
+Infer the language from the code.
+
+Produce a structured review with findings grouped into these categories. Only
+include a category if you have findings for it — omit empty categories.
+
+## Correctness
+Bugs, logic errors, incorrect assumptions, unhandled edge cases, and broken error
+handling. Label each finding: [bug], [logic], [edge-case], or [error-handling].
+
+## Security
+Input validation gaps, injection risks, authentication or authorisation issues,
+secrets in code, unsafe operations. Label each: [injection], [auth], [secrets],
+[unsafe], or [validation].
+
+## Maintainability
+Code that is unnecessarily complex, poorly named, inadequately tested, or
+structured in a way that will make future changes difficult. Label each:
+[complexity], [naming], [structure], or [testability].
+
+## Conventions
+Deviations from the language's idiomatic style or the patterns visible in the
+surrounding code. Label each: [style] or [pattern].
+
+Format each finding as:
+**[CATEGORY] [label]** Line N (or lines N–M): description of the issue and why it
+matters. Suggested fix in one sentence.
+
+After all findings, add:
+## Summary
+- Total findings: N (critical: X, moderate: Y, minor: Z)
+- Most important to fix: [one sentence identifying the highest-priority issue]
+- Looks good: [one sentence on what the code does well, if anything]
+
+Severity guide:
+- Critical: could cause data loss, security breach, or incorrect behaviour in production
+- Moderate: likely to cause bugs or maintenance problems
+- Minor: style or convention issue with no functional impact
+
+If the user named a specific focus, give it particular attention.
+```

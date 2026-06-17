@@ -1,5 +1,6 @@
 ---
 title: Review test coverage and quality
+description: Review an existing test suite for coverage gaps and test-quality issues. Use to find what is untested or weakly tested before relying on a suite.
 category: testing
 tags: [test-review, coverage, quality, gaps, assertions]
 context_budget: medium
@@ -137,3 +138,46 @@ expect given the test names, and the single highest-priority gap.
 - Related prompts:
   [`code/generate-unit-tests.md`](../code/generate-unit-tests.md),
   [`testing/generate-test-cases.md`](./generate-test-cases.md)
+
+## Skill body
+
+A verbatim skill body (overrides the placeholder transform, since the source and
+test code come from context rather than pasted fenced blocks).
+
+```
+Review the test suite for the source the user wants assessed — both the source
+code and its existing tests, from this conversation or files the user references.
+Infer the language from the code.
+
+Produce a structured coverage review:
+
+## Missing cases
+Test cases that should exist but don't. For each:
+- **[function/behaviour]**: what scenario is untested and why it matters
+
+Group by: happy paths, boundary values, error conditions, edge cases.
+
+## Weak assertions
+Tests that exist but don't verify the right thing. Common patterns:
+- Tests that only check that no error is thrown, without checking output
+- Tests that assert on implementation details (mocked internals) rather than
+  observable behaviour
+- Tests that pass vacuously (always pass regardless of the code's behaviour)
+For each: test name, what it currently asserts, what it should assert.
+
+## Redundant tests
+Tests that duplicate coverage already provided by another test, or that test
+behaviour that isn't meaningful to verify. List only clear redundancies.
+
+## Test quality issues
+Structural problems that make the suite harder to maintain or understand:
+- Misleading test names (name doesn't match what the test checks)
+- Tests with too many assertions covering unrelated concerns
+- Tests that rely on test execution order
+- Tests with unclear setup that obscures what's being tested
+
+## Summary
+- Coverage assessment: [strong / adequate / weak / poor]
+- Most critical gap: [the single highest-priority missing case]
+- Recommended action: [what to do first to improve this suite]
+```

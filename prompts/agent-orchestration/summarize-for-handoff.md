@@ -1,5 +1,6 @@
 ---
 title: Summarize session state for handoff
+description: Summarize the current session's state — what was done, what's left, and key context — for handoff to a new session or agent. Use before a context reset or when delegating continued work.
 category: agent-orchestration
 tags: [handoff, summary, context, session, pipeline, continuity]
 context_budget: low
@@ -130,3 +131,10 @@ Review 2: {{REVIEW_2}}
 - Related guides:
   [`guides/agent-patterns/multi-agent-orchestration.md`](../../guides/agent-patterns/multi-agent-orchestration.md),
   [`guides/agent-patterns/single-agent.md`](../../guides/agent-patterns/single-agent.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `SESSION_CONTEXT`: the conversation or work to summarise
+- `NEXT_TASK`: what the next session or agent will be doing

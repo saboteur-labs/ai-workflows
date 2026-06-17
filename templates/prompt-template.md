@@ -12,8 +12,29 @@ comment and placeholder value with real content.
 ```yaml
 ---
 title: # Short, imperative phrase — "Generate unit tests for a module"
+
+# ------------------------------------------------------------
+# description: one or two sentences for the compiled Claude skill —
+#   what it does AND when to use it. Drives skill auto-triggering,
+#   so lead with the key use case. Kept under the ~1,536-char skill
+#   listing cap. REQUIRED to compile a SKILL.md; omit to ship this
+#   prompt as a Copilot prompt only. (See scripts/build-dist.js.)
+# ------------------------------------------------------------
+description:
+
 category: # One of: code | planning | testing | agent-orchestration
 tags: # List of lowercase keywords, e.g. [unit-test, jest, python]
+
+# ------------------------------------------------------------
+# Claude skill options (all optional):
+#   argument-hint: hint shown after /command in autocomplete,
+#     e.g. "[feature name]". Omit when input comes from context.
+#   skill-saves-document: true — append the standard "save the
+#     output" footer. Set only for prompts that produce a document
+#     to save (specs, task lists, ADRs); omit for code/review output.
+# ------------------------------------------------------------
+# argument-hint:
+# skill-saves-document: true
 
 # ------------------------------------------------------------
 # context_budget: how much context window this prompt consumes
@@ -144,9 +165,48 @@ N/A
 
 ---
 
+## Skill compilation sections (optional)
+
+`scripts/build-dist.js` compiles each prompt with a `description` into a Claude
+skill at `dist/claude/skills/saboteur-<name>/SKILL.md`. By default it rewrites the
+`## Prompt` block's `{{PLACEHOLDERS}}` into natural-language instructions. Three
+optional sections tune that output — add them after the `## Notes & tips` section:
+
+````markdown
+## Skill inputs
+
+<!-- Maps each {{VAR}} to the phrase the skill body should use in place of it.
+     Write plain nouns (no "if the user…" clauses — the conditional lead-in adds
+     that). Unmapped vars fall back to a humanized name. -->
+
+- `CONCEPT_DOCUMENT`: the concept document from this conversation or a file the user references
+- `MILESTONE_SCOPE`: a milestone scope
+
+## Skill wrap-up
+
+<!-- Prose appended after the body: chaining offers to the next skill
+     (use the namespaced /saboteur-… command), interactive resolution steps, etc.
+     Avoid `## ` headings inside this section. -->
+
+After saving, offer to run `/saboteur-break-into-tasks` next.
+
+## Skill body
+
+<!-- A verbatim skill body that OVERRIDES the placeholder transform entirely.
+     Use only when auto-flattening reads poorly (e.g. expression conditionals or
+     fenced code-paste blocks). -->
+
+```
+…full skill body, no {{placeholders}}…
+```
+````
+
 ## Checklist before committing
 
 - [ ] Frontmatter is complete and valid YAML
+- [ ] `description` is set (single line) so the prompt compiles to a Claude skill
+- [ ] `skill-saves-document: true` set if the prompt produces a document to save
+- [ ] If `## Skill inputs` is present, every `{{VAR}}` in the prompt is mapped
 - [ ] `context_budget` reflects the actual token cost of the filled-in prompt
 - [ ] `interfaces` list has been verified — not just assumed
 - [ ] All `{{PLACEHOLDERS}}` are documented in the Placeholders table

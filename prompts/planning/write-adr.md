@@ -1,10 +1,14 @@
 ---
 title: Write an Architecture Decision Record
+description: Document an architectural decision as an ADR — context, the decision, the options considered, and consequences. Use to capture a significant technical decision in a durable, reviewable record.
 category: planning
 tags: [adr, architecture, decision, documentation, design, trade-offs]
 context_budget: low
 interfaces: [ide, chat, cli, api]
 versions:
+    - version: 1.1.0
+      date: 2026-05-13
+      note: Added interactive file-output step
     - version: 1.0.0
       date: 2026-03-17
       note: Initial version
@@ -103,6 +107,26 @@ Rules:
 - Write in past tense for Context (what was true), present tense for
   Consequences (what is now true as a result).
 - Do not use jargon without defining it.
+
+## File output
+
+After generating the ADR, ask the user:
+> "Do you want this written to a file? (yes / no)"
+
+If **yes**:
+- Look for an existing ADR directory. Check in order: `docs/decisions/`,
+  `docs/adr/`, `adr/`, `architecture/decisions/`.
+- If found: list its contents to determine the next sequential number (e.g.,
+  if the highest numbered file starts with `0011-`, propose `0012-`).
+- If not found: suggest `docs/decisions/` as the default and offer to
+  create it.
+- Propose a filename: `NNNN-[kebab-slug-of-decision-title].md` in that
+  directory.
+- Confirm the path before writing: "I'll write this to `[proposed path]`.
+  Confirm, or tell me a different location."
+- Write the file once the user confirms.
+
+If **no**: output the ADR as text only. Do not create a file.
 ```
 
 ### Placeholders
@@ -133,6 +157,24 @@ This prompt is already `context_budget: low`. No low-context variant needed.
   `0012-use-postgres-for-activity-storage.md`
 - For reversing a previous decision, add a "Supersedes" field below Status:
   `**Supersedes:** ADR-007`
+- When writing to a file, the prompt will look for an existing ADR directory
+  and suggest the next sequential filename automatically. If your project uses
+  a non-standard location, confirm or override the suggested path before the
+  file is written.
+- To surface decisions worth documenting from an existing codebase, use
+  [`planning/surface-architecture-decisions.md`](./surface-architecture-decisions.md)
+  first — it pre-fills all the placeholders this prompt needs.
 - Related prompts:
   [`planning/write-feature-spec.md`](./write-feature-spec.md),
-  [`planning/estimate-complexity.md`](./estimate-complexity.md)
+  [`planning/estimate-complexity.md`](./estimate-complexity.md),
+  [`planning/surface-architecture-decisions.md`](./surface-architecture-decisions.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `DECISION`: the decision made, in plain language
+- `DECISION_TITLE`: a short title for the ADR heading
+- `DATE`: today's date
+- `CONTEXT`: the background — why the decision was necessary and what constraints existed
+- `OPTIONS`: the options that were considered

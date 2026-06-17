@@ -1,5 +1,6 @@
 ---
 title: Generate test cases for a feature or function
+description: Generate a list of test cases (descriptions, not code) for a feature or function, covering normal, edge, and failure paths. Use to plan coverage before writing tests.
 category: testing
 tags: [test-cases, testing, qa, acceptance-criteria, given-when-then]
 context_budget: low
@@ -113,3 +114,11 @@ This prompt is already `context_budget: low`. No low-context variant needed.
   [`code/generate-unit-tests.md`](../code/generate-unit-tests.md),
   [`testing/review-test-coverage.md`](./review-test-coverage.md),
   [`testing/write-e2e-scenario.md`](./write-e2e-scenario.md)
+
+## Skill inputs
+
+Used by the compiled Claude skill to rewrite the prompt's placeholders.
+
+- `INPUT_TYPE`: what the cases are for — a function, feature, API endpoint, or acceptance criteria
+- `INPUT`: the spec, function signature, or description — from this conversation or a file the user references
+- `FORMAT`: the output format for the cases (default: a numbered list)
