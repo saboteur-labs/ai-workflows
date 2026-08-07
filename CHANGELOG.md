@@ -20,6 +20,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
   the waves preserve it. `file_conflicts` then covers what waves alone cannot —
   two tasks can be dependency-independent and still edit the same file, which a
   parallel runner discovers as a merge conflict it cannot resolve
+- `prompts/agent-orchestration/retrospect-session.md` — converts a finished
+  session's corrections and missing context into a small set of checkable
+  candidate rules, each routed to the artifact that should carry it (project
+  instructions, a prompt, a skill, or an agent definition). Closes the capture
+  half of the loop whose apply half is `skills/improve-agent/`, and follows
+  that skill's append-only log convention so a signal recurring across
+  sessions is detected rather than remembered
 - `schemas/` — machine contracts for the four prompts whose output is consumed
   by an agent rather than only read by a human (`sab.product-spec/1`,
   `sab.feature-spec/1`, `sab.features/1`, `sab.tasks/1`). Each declares the
