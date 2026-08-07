@@ -49,6 +49,16 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- `tools/lib/check-outputs.js` — list entries that wrapped onto indented
+  continuation lines were read only as far as their first line, so a user story
+  lost its `so that` clause and a requirement lost its `[US-n]` reference. This
+  was the remaining half of the field-continuation fix: documents had to be
+  authored as single long lines to validate, against the repo's own wrapping
+  style. Indentation is required for a continuation and a blank line ends an
+  entry, so prose following a list is never absorbed into it
+- `examples/spec-to-implementation/01-write-spec.md` — the user stories,
+  requirements, and open questions are wrapped at the normal width again, now
+  that conformance no longer depends on line breaks
 - `tools/lib/check-outputs.js` — field and bullet parsing lost data in two
   ways. A bullet label written with the colon inside the bold
   (`- **Total tasks:** 6`) left the closing `**` stranded at the head of the
