@@ -325,6 +325,32 @@ function checkPromptDrift(entry) {
 
 const FIELD_RE = /^\s*\*\*([^*:]+):\*\*\s*(.*)$/;
 
+// `- Label: value` bullets. The alternation matters: authors write the colon
+// INSIDE the bold (`- **Total tasks:** 6`) as often as outside it
+// (`- **Total tasks**: 6`). Matching only the latter leaves the closing `**`
+// stranded at the head of the value, which then fails every typed check.
+const BULLET_RE = /^\s*[-*]\s*(?:\*\*([^*:]+?):\*\*|\*{0,2}([^:*]+?)\*{0,2}\s*:)\s*(.*)$/;
+
+// Lines belonging to a field whose value did not fit on its own line. Stops at
+// the next field, any heading, or a blank line once content has been gathered.
+//
+// This handles BOTH shapes, and the second is the dangerous one: a value that
+// begins on the field's line and hard-wraps onto the next reads as complete
+// while silently losing its tail. For "Done when" — the condition commits are
+// gated on — a truncated value is worse than an empty one, because nothing
+// downstream can tell it was cut.
+function continuation(src, startIdx, seed) {
+  const acc = seed ? [seed] : [];
+  let j = startIdx + 1;
+  for (; j < src.length; j++) {
+    const nl = src[j];
+    if (FIELD_RE.test(nl) || /^#{1,4}\s/.test(nl)) break;
+    if (/^\s*$/.test(nl)) { if (acc.length) break; else continue; }
+    acc.push(nl.trim());
+  }
+  return { value: acc.join(' '), next: j };
+}
+
 function parseDocument(text, schema) {
   const lines = text.split('\n');
   const doc = { items: {}, sections: {}, lists: {} };
@@ -333,7 +359,8 @@ function parseDocument(text, schema) {
   for (const item of schema.items) {
     const found = [];
     let cur = null;
-    for (const line of lines) {
+    for (let li = 0; li < lines.length; li++) {
+      const line = lines[li];
       const hm = item.heading.regex.exec(line);
       if (hm) {
         cur = { _raw: line, _fields: {} };
@@ -347,7 +374,14 @@ function parseDocument(text, schema) {
       // A new top-level heading ends the current item.
       if (/^#{1,3}\s/.test(line) && !item.heading.regex.test(line)) { cur = null; continue; }
       const fm = FIELD_RE.exec(line);
-      if (fm) cur._fields[fm[1].trim()] = fm[2].trim();
+      if (fm) {
+        // A field whose value is empty on its own line continues onto the lines
+        // below it — authors write multi-clause "Done when" as a bullet list,
+        // and reading only the same-line remainder loses the whole condition.
+        const c = continuation(lines, li, fm[2].trim());
+        cur._fields[fm[1].trim()] = c.value;
+        li = c.next - 1;
+      }
     }
     doc.items[item.name] = found;
   }
@@ -374,12 +408,34 @@ function parseDocument(text, schema) {
     const hm = sec.heading.regex.exec(lines[startIdx]);
     if (hm) sec.heading.fields.forEach((f, i) => { entry[f.name] = hm[i + 1].trim(); });
 
-    for (const line of bodyLines) {
+    for (let li = 0; li < bodyLines.length; li++) {
+      const line = bodyLines[li];
       const fm = FIELD_RE.exec(line);
-      if (fm) { entry._fields[fm[1].trim()] = fm[2].trim(); continue; }
-      // `- Label: value` bullets
-      const bm = line.match(/^\s*[-*]\s*\*{0,2}([^:*]+?)\*{0,2}\s*:\s*(.*)$/);
-      if (bm) entry._bullets[bm[1].trim()] = bm[2].trim();
+      if (fm) {
+        const cont = continuation(bodyLines, li, fm[2].trim());
+        entry._fields[fm[1].trim()] = cont.value;
+        li = cont.next - 1;
+        continue;
+      }
+      const bm = line.match(BULLET_RE);
+      if (bm) {
+        const label = (bm[1] !== undefined ? bm[1] : bm[2]).trim();
+        let val = (bm[3] || '').trim();
+        if (!val) {
+          // Indented lines under the bullet are its value (`- Risks:` + sub-bullets).
+          const acc = [];
+          let j = li + 1;
+          for (; j < bodyLines.length; j++) {
+            const nl = bodyLines[j];
+            if (/^\s*$/.test(nl) || /^[-*]\s/.test(nl)) break;
+            if (/^\s+\S/.test(nl)) { acc.push(nl.trim()); continue; }
+            break;
+          }
+          val = acc.join(' ');
+          li = j - 1;
+        }
+        entry._bullets[label] = val;
+      }
     }
 
     if (sec.list) {
@@ -850,6 +906,52 @@ function deriveJson(doc, schema, sourcePath) {
     };
     for (const id of [...depsOf.keys()].sort((a, b) => a - b)) visit(id);
     out.execution_order = order;
+
+    // Dependency LEVELS. Tasks sharing a level have no dependency on one another
+    // and may run concurrently; the flat order above is one legal serialisation
+    // of this and discards the fact that any parallelism was available at all.
+    const level = new Map();
+    const computing = new Set();
+    const depth = (id) => {
+      if (level.has(id)) return level.get(id);
+      if (computing.has(id)) return 0; // cycle: reported as an error elsewhere
+      computing.add(id);
+      const ds = (depsOf.get(id) || []).filter((d) => depsOf.has(d) && d !== id);
+      const v = ds.length ? Math.max(...ds.map(depth)) + 1 : 0;
+      computing.delete(id);
+      level.set(id, v);
+      return v;
+    };
+    for (const id of depsOf.keys()) depth(id);
+    const waves = [];
+    for (const id of order) (waves[level.get(id)] ||= []).push(id);
+    out.execution_waves = waves.map((w) => w.sort((a, b) => a - b));
+
+    // Same-wave file overlap. Two tasks can be dependency-independent and still
+    // edit the same file — that is the collision a parallel runner discovers as
+    // a merge conflict it cannot resolve. Declared "Files" makes it predictable
+    // before any work is dispatched.
+    const filesField = taskItem.fields.find((f) => /^files$/i.test(f.label));
+    const pathsOf = new Map();
+    for (const inst of insts) {
+      const raw = filesField ? inst._fields[filesField.label] || '' : '';
+      pathsOf.set(inst.id, new Set(
+        (raw.match(/`([^`]+)`/g) || [])
+          .map((s) => s.slice(1, -1).split(/\s*\(/)[0].trim())
+          .filter((p) => /[/.]/.test(p)),
+      ));
+    }
+    const conflicts = [];
+    for (const w of out.execution_waves) {
+      for (let a = 0; a < w.length; a++) {
+        for (let b = a + 1; b < w.length; b++) {
+          const other = pathsOf.get(w[b]) || new Set();
+          const shared = [...(pathsOf.get(w[a]) || [])].filter((p) => other.has(p));
+          if (shared.length) conflicts.push({ tasks: [w[a], w[b]], files: shared });
+        }
+      }
+    }
+    out.file_conflicts = conflicts;
   }
 
   return out;
