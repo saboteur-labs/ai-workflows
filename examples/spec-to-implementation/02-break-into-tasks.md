@@ -35,6 +35,7 @@ and returns an array of objects with `timestamp`, `actionType`,
 **Notes:** Check whether an existing query in the activity service can
 be reused. The return type should be a plain object array, not a
 database model, to keep the service layer clean.
+**Done:** [ ] — check off when the task is complete
 
 ---
 
@@ -53,6 +54,7 @@ normal multi-row case
 library unless escaping rules are complex. CSV escaping rules: wrap
 values containing commas, quotes, or newlines in double quotes; escape
 internal double quotes by doubling them.
+**Done:** [ ] — check off when the task is complete
 
 ---
 
@@ -70,6 +72,7 @@ and valid CSV body — confirmed by an integration test
 **Notes:** The endpoint must be authenticated — use the existing auth
 middleware. Return 500 with a user-facing error message if the export
 fails; do not return a partial or empty file.
+**Done:** [ ] — check off when the task is complete
 
 ---
 
@@ -87,6 +90,7 @@ message is shown if the download fails
 `href` pointing to the endpoint and `download` attribute set, or via a
 `fetch` call followed by a blob URL. The anchor approach is simpler and
 avoids holding the response in memory.
+**Done:** [ ] — check off when the task is complete
 
 ---
 
@@ -100,6 +104,7 @@ a user with activity records, and appropriate error handling for a user
 with no records
 **Depends on:** Task 4
 **Estimate:** 1–2 hours
+**Done:** [ ] — check off when the task is complete
 
 ---
 
@@ -109,7 +114,7 @@ with no records
 - Total estimated effort: 7–11 hours
 - Critical path: Tasks 1 → 3 → 4 → 5 (tasks 1 and 2 can run in parallel)
 - Risks: Task 1 depends on the activity log query being performant enough
-  to meet the 5-second requirement from requirement 6 — validate this
+  to meet the 5-second requirement from FR-6 — validate this
   with a test query before committing to the synchronous approach
 
 ---
