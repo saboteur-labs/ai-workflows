@@ -6,6 +6,7 @@ category: planning
 tags: [tasks, breakdown, planning, estimation, sprint, kanban]
 context_budget: low
 interfaces: [ide, chat, cli, api]
+output-schema: sab.tasks/1
 versions:
     - version: 1.0.0
       date: 2026-03-17
@@ -71,7 +72,7 @@ Output format — one entry per task:
 **Files:** [files to create or modify, or "TBD if unknown"]
 **Done when:** [specific, verifiable condition]
 **Depends on:** [task numbers this task requires, or "none"]
-**Estimate:** [{{GRANULARITY}} — your estimate for this task]
+**Estimate:** [your estimate for this task, in the granularity unit given above]
 **Notes:** [assumptions, risks, or implementation hints. Omit if none.]
 **Done:** [ ] — check off when the task is complete
 
@@ -100,6 +101,7 @@ wait for my answer before writing the file.
 | `{{SPEC}}`        | The feature spec to decompose         | _(paste spec contents)_                                                                      |
 | `{{GRANULARITY}}` | Desired task size and estimation unit | `half-day tasks, estimated in hours`, `story points (1/2/3/5/8)`, `T-shirt sizes (S/M/L/XL)` |
 | `{{OUTPUT_PATH}}` | Optional. Where to write the task list. Omit to be asked before the file is saved. | `docs/planning/export-csv.tasks.md`                          |
+
 
 ## Low-context variant
 

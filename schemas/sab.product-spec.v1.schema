@@ -1,0 +1,55 @@
+schema: sab.product-spec/1
+doc: product-spec
+prompt: prompts/planning/write-product-spec.md
+output-path: specs/product/{slug}.md
+
+# Consumed by an automated review step (Open Questions) and by
+# break-into-features, which must map every FR to exactly one feature.
+#
+# The low-context variant drops the Owner field and requirement-to-story
+# mapping; validate its output against sab.product-spec/1-lite.
+
+section Header | required
+  heading: # Product Spec: {title:text}
+  field: Milestone scope | required | text
+  field: Status | required | enum:Draft,In review,Approved
+  field: Source concept | required | text
+
+section Overview | required
+  heading: ## Overview
+section Goals | required
+  heading: ## Goals
+  list: bullet | min:4 | max:6
+section Non-goals | required
+  heading: ## Non-goals
+  list: bullet | min:1
+section Users | required
+  heading: ## Users
+section User Stories | required
+  heading: ## User Stories
+  list: bullet | min:1 | id:US-{n:int} | match:As a .+, I want to .+ so that .+
+section Functional Requirements | required
+  heading: ## Functional Requirements
+  list: numbered | min:1 | id:FR-{n:int} | match:\b(MUST|SHOULD|MAY)\b | refs:US.id
+  group: milestone | heading:### {milestone:text} Requirements
+section Constraints | required
+  heading: ## Constraints
+  list: bullet | min:1
+section Open Questions | required
+  heading: ## Open Questions
+  list: bullet | min:0 | id:OQ-{n:int} | empty-literal:None.
+  field: Impact | required | text
+  field: Owner | required | text
+section Out of Scope (Deferred) | required
+  heading: ## Out of Scope (Deferred)
+  list: bullet | min:0
+
+graph
+  unique: FR.id
+  sequential: FR.id
+  unique: US.id
+  sequential: US.id
+  unique: OQ.id
+  sequential: OQ.id
+  resolves: FR.refs -> US.id
+  resolves: FR.blocked -> OQ.id

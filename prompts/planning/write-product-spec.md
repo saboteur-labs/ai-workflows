@@ -6,6 +6,7 @@ category: planning
 tags: [spec, planning, requirements, product, milestones, design-doc]
 context_budget: medium
 interfaces: [ide, chat, cli, api]
+output-schema: sab.product-spec/1
 versions:
     - version: 1.0.0
       date: 2026-04-26
@@ -112,8 +113,10 @@ For each user type from the concept's Target Audience:
 
 ## User Stories
 Group by user type. Derive 1–2 stories per Key Capability from the concept.
+Prefix each with a stable ID, numbered from 1 with no gaps and continuous
+across user types:
 
-"As a [user type], I want to [action] so that [outcome]."
+"US-1: As a [user type], I want to [action] so that [outcome]. [MVP]"
 
 Include only stories in scope for the specified milestone(s). Tag each with
 the milestone it belongs to: [MVP], [v1], or [v2].
@@ -123,10 +126,12 @@ the milestone it belongs to: [MVP], [v1], or [v2].
 Organise by milestone. For each milestone in scope:
 
 ### [Milestone name] Requirements
-Numbered list of specific, testable requirements.
+Numbered list of specific, testable requirements, each prefixed with a stable
+ID. Number FRs from 1 with no gaps, continuing across milestone groups — do
+not restart numbering at each milestone.
 - Each requirement must be independently verifiable.
 - Use MUST, SHOULD, or MAY (RFC 2119).
-- Map each requirement to a user story: e.g., "Users MUST be able to X. [US-3]"
+- Map each requirement to a user story: e.g., "FR-4: Users MUST be able to X. [US-3]"
 - Do not include implementation details.
 - If an open question blocks a requirement, mark it: [BLOCKED: OQ-N]
 
@@ -171,6 +176,7 @@ Rules for the entire spec:
 | ---------------------- | -------------------------------------------------------------------------- | -------- | ---------------------------------------------------------- |
 | `{{CONCEPT_DOCUMENT}}` | The full concept document output from `ideate-project.md`                 | Yes      | _(paste full concept document)_                            |
 | `{{MILESTONE_SCOPE}}`  | Optional. Limit the spec to one or more milestones. Omit for all three.   | No       | `MVP`, `MVP and v1`, `v2 only`                             |
+
 
 ## Low-context variant
 

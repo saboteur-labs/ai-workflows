@@ -1,0 +1,30 @@
+schema: sab.tasks/1
+doc: task-list
+prompt: prompts/planning/break-into-tasks.md
+output-path: specs/features/{slug}/tasks.md
+
+# Consumed by an automated implementation runner, which parses the task graph
+# to order work and gate progress on "Done when".
+
+item Task | min:1
+  heading: ### Task {id:int}: {title:text}
+  field: What | required | text
+  field: Files | required | text
+  field: Done when | required | text
+  field: Depends on | required | refs:Task.id or none
+  field: Estimate | required | text
+  field: Notes | optional | text
+  field: Done | required | checkbox
+
+section Summary | required
+  heading: ## Summary
+  bullet: Total tasks | required | int | eq:count(Task)
+  bullet: Total estimated effort | required | text
+  bullet: Critical path | required | seq:Task.id
+  bullet: Risks | required | text
+
+graph
+  unique: Task.id
+  sequential: Task.id
+  acyclic: Task.Depends on
+  precedes: Task.Depends on

@@ -1,0 +1,40 @@
+schema: sab.features/1
+doc: feature-breakdown
+prompt: prompts/planning/break-into-features.md
+output-path: specs/product/{slug}.features.md
+
+# Consumed by break-into-tasks when run per feature. The partition check is the
+# safeguard against dropped scope: every requirement belongs to exactly one
+# feature. Pass --against <product spec> to check coverage across documents.
+#
+# The low-context variant drops User stories, Vertical slice, Notes, and the
+# Coverage check section; validate its output against sab.features/1-lite.
+
+item Feature | min:1
+  heading: ### Feature {id:int}: {title:text}
+  field: Value | required | text
+  field: Vertical slice | required | text
+  field: Requirements covered | required | ids
+  field: User stories | required | text or none
+  field: Depends on | required | refs:Feature.id or none
+  field: Branch suggestion | required | slug
+  field: Notes | optional | text
+
+section Coverage check | required
+  heading: ## Coverage check
+  bullet: Requirements covered | required | map:Feature.id
+  bullet: Unassigned requirements | required | ids or none
+
+section Summary | required
+  heading: ## Summary
+  bullet: Total features | required | int | eq:count(Feature)
+  bullet: Suggested build order | required | text
+  bullet: Independently shippable | required | refs:Feature.id or none
+  bullet: Risks | required | text
+
+graph
+  unique: Feature.id
+  sequential: Feature.id
+  acyclic: Feature.Depends on
+  precedes: Feature.Depends on
+  partition: Feature.Requirements covered
