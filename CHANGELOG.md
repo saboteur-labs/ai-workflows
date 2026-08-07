@@ -43,6 +43,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
   following lines was read only as far as its first line. The truncating case
   was the more dangerous of the two — a cut `Done when` still reads as present,
   so nothing downstream could tell the condition had been shortened
+- `examples/spec-to-implementation/` — the worked examples did not conform to
+  the schemas their own prompts declare. `01-write-spec.md` predated the
+  `FR-N`/`US-N`/`OQ-N` identifiers and RFC 2119 keywords, and
+  `02-break-into-tasks.md` was missing the required `Done` checkbox on every
+  task. Both now validate against `sab.feature-spec/1` and `sab.tasks/1`, and
+  the downstream references to spec requirements in `02` and `03` use the
+  `FR-N` scheme rather than bare numbers
 
 ### Changed
 

@@ -99,7 +99,7 @@ describe("getActivityExportForUser", () => {
 - [ ] `src/services/activity-export.ts` is the correct file path for
       your project
 - [ ] The `ActivityExportRecord` interface matches the columns defined in
-      requirement 3 of the spec (`timestamp`, `actionType`, `description`,
+      FR-3 of the spec (`timestamp`, `actionType`, `description`,
       `ipAddress`)
 - [ ] The function signature (`userId: string`) matches how user IDs are
       typed elsewhere in your codebase — if user IDs are numbers or UUIDs

@@ -73,34 +73,23 @@ their data, and reduces manual data export work from the support team.
 
 ## User stories
 
-- As a user, I want to download my activity history as a CSV so that I
-  can review it offline or import it into a spreadsheet tool
-- As a user, I want the exported file to be named clearly so that I can
-  identify it among my downloads
+- US-1: As a user, I want to download my activity history as a CSV so that I can review it offline or import it into a spreadsheet tool
+- US-2: As a user, I want to receive the export under a clearly identifiable filename so that I can find it among my downloads
 
 ## Functional requirements
 
-1. The account settings page must include an "Export activity history"
-   button visible to all authenticated users
-2. Clicking the button must initiate a CSV file download in the browser
-3. The CSV must include columns for: timestamp, action type, description,
-   and IP address
-4. The CSV must include all activity records for the authenticated user —
-   no pagination or truncation
-5. The downloaded file must be named `activity-history-YYYY-MM-DD.csv`
-   where the date is the export date
-6. The export must complete within 5 seconds for accounts with up to
-   10,000 activity records
-7. If the export fails, the user must receive an error message — the
-   download must not silently produce an empty or corrupt file
+1. FR-1: The account settings page MUST include an "Export activity history" button visible to all authenticated users. [US-1]
+2. FR-2: Clicking the button MUST initiate a CSV file download in the browser. [US-1]
+3. FR-3: The CSV MUST include columns for timestamp, action type, description, and IP address. [US-1]
+4. FR-4: The CSV MUST include all activity records for the authenticated user — no pagination or truncation. [US-1]
+5. FR-5: The downloaded file MUST be named `activity-history-YYYY-MM-DD.csv` where the date is the export date. [US-2]
+6. FR-6: The export MUST complete within 5 seconds for accounts with up to 10,000 activity records. [US-1]
+7. FR-7: If the export fails, the user MUST receive an error message — the download MUST NOT silently produce an empty or corrupt file. [US-1]
 
 ## Open questions
 
-- Should the IP address column be included given privacy implications in
-  some jurisdictions? Confirm with legal/product before implementing.
-- What is the maximum expected number of activity records per account?
-  This affects whether the 5-second requirement is achievable
-  synchronously.
+- OQ-1: Should the IP address column be included given privacy implications in some jurisdictions? Confirm with legal/product before implementing. — Impact: FR-3
+- OQ-2: What is the maximum expected number of activity records per account? This affects whether the 5-second requirement is achievable synchronously. — Impact: FR-6
 
 ## Out of scope (deferred)
 
