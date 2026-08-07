@@ -20,6 +20,12 @@ bottom, and open a new empty `[Unreleased]` block above it.
   the waves preserve it. `file_conflicts` then covers what waves alone cannot —
   two tasks can be dependency-independent and still edit the same file, which a
   parallel runner discovers as a merge conflict it cannot resolve
+- `skills/improve-prompt/` — tunes a prompt or skill in this repo from evidence
+  of how it actually performed, consuming the retrospective log as its input
+  queue. Applies the propose-before-act rule rather than editing directly, and
+  guards the `dist/` trap: compiled prompts are git-ignored and wiped on every
+  build, and `prompts/README.md` invites users to symlink them, so the file
+  handed to a tuner is often the compiled twin rather than the source
 - `prompts/agent-orchestration/retrospect-session.md` — converts a finished
   session's corrections and missing context into a small set of checkable
   candidate rules, each routed to the artifact that should carry it (project

@@ -58,6 +58,7 @@ projects — they are used in-place when working on this knowledge base.
 | [`repo-maintenance/`](./repo-maintenance/)                 | medium | Maintain and extend this repo — propose changes, check atomicity, enforce style |
 | [`repo-maintenance-minimal/`](./repo-maintenance-minimal/) | low    | Low-context variant of repo-maintenance                                         |
 | [`freshness-check/`](./freshness-check/)                   | low    | Assess whether a file's external claims are likely still accurate               |
+| [`improve-prompt/`](./improve-prompt/)                     | medium | Tune a prompt or skill in this repo from evidence of how it actually performed  |
 
 ---
 
