@@ -206,9 +206,10 @@ can be written. These are the unresolved decisions that would block a
 speccing session.
 
 ### Next Steps
-1–2 sentences. If the concept is ready to be specced, say so and reference
-[`planning/write-feature-spec.md`](./write-feature-spec.md). If further
-research or validation is needed first, describe what specifically.
+1–2 sentences. If the concept is ready to be specced, say so and name the
+prompt to use by name, without a file path: write-product-spec for a whole
+product, or write-feature-spec for a single feature. If further research or
+validation is needed first, describe what specifically.
 
 ---
 
@@ -321,7 +322,8 @@ Be specific.
 At least 3 questions that must be answered before a spec can be written.
 
 ### Next Steps
-1–2 sentences. Reference write-feature-spec.md if ready to spec.
+1–2 sentences. If ready to spec, name the prompt by name, without a file path:
+write-product-spec for a whole product, write-feature-spec for one feature.
 
 Keep the document under 800 words.
 ```

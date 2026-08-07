@@ -32,15 +32,58 @@ const PROMPTS_DIR = path.join(__dirname, '..', 'prompts');
 const DIST_DIR = path.join(__dirname, '..', 'dist');
 const SKILL_PREFIX = 'saboteur-';
 
-// Appended to every generated skill body. Standardises output handling and fixes
-// the landmine where generated docs were written inside the skill's own directory.
-const SAVE_FOOTER = `## Saving the output
+// Appended to document-producing skills. Two flavours, because where a document
+// belongs is only knowable for the ones with a declared convention.
+//
+// Skills whose output a downstream agent consumes get a definite path from their
+// schema's `output-path`. Everything else must be told or must ask — the old
+// footer let the model infer a location from whatever folder looked relevant,
+// which is exactly how a document ends up somewhere nothing can find it.
+const SAVE_FOOTER_ASK = `## Saving the output
 
-When the document is complete: if the user gave an explicit path, use it. Otherwise
-look for an existing relevant folder (for example \`docs/\`, \`docs/planning/\`, a
-\`specs/\` or feature-spec folder, or the folder the input document came from) and
-propose saving there; if none is clearly appropriate, ask the user where to save.
-Never write into the skill's own directory.`;
+When the document is complete: if the user gave an explicit path, use it.
+Otherwise ask where to save it and wait for an answer. Do not infer a location
+from whichever folder looks relevant, and never write into the skill's own
+directory.`;
+
+function saveFooterForPath(outputPath, schemaId) {
+  return `## Saving the output
+
+When the document is complete, save it to:
+
+    ${outputPath}
+
+where \`{slug}\` is the kebab-cased name of the thing this document covers
+(e.g. \`export-csv\`). An explicit path from the user always wins.
+
+If the repository already keeps documents of this kind somewhere else, follow
+that existing layout rather than creating a parallel tree — but keep the
+filename. Do not invent a new location, do not ask when the convention applies,
+and never write into the skill's own directory.
+
+This path is part of the \`${schemaId}\` contract: downstream agents locate this
+document by convention, so an ad-hoc location breaks the pipeline even when the
+content is correct.`;
+}
+
+// Minimal reader for schemas/*.schema — only the header keys the compiler needs.
+// tools/lib/check-outputs.js owns the full DSL.
+function loadSchemaHeaders() {
+  const dir = path.join(__dirname, '..', 'schemas');
+  const byId = {};
+  if (!fs.existsSync(dir)) return byId;
+  for (const file of fs.readdirSync(dir)) {
+    if (!file.endsWith('.schema')) continue;
+    const text = fs.readFileSync(path.join(dir, file), 'utf8');
+    const id = (text.match(/^schema:\s*(.+)$/m) || [])[1];
+    if (!id) continue;
+    byId[id.trim()] = {
+      id: id.trim(),
+      outputPath: ((text.match(/^output-path:\s*(.+)$/m) || [])[1] || '').trim(),
+    };
+  }
+  return byId;
+}
 
 function parseFrontmatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---\n/);
@@ -151,7 +194,7 @@ function buildCopilotFile(title, promptContent) {
   return `---\ndescription: ${title}\nmode: agent\n---\n\n${promptContent}\n`;
 }
 
-function buildSkillFile(meta, slug, body, wrapUp) {
+function buildSkillFile(meta, slug, body, wrapUp, schema) {
   const name = `${SKILL_PREFIX}${slug}`;
   let fm = `---\nname: ${name}\ndescription: ${meta.description}\n`;
   if (meta['argument-hint']) fm += `argument-hint: ${meta['argument-hint']}\n`;
@@ -159,9 +202,15 @@ function buildSkillFile(meta, slug, body, wrapUp) {
 
   const parts = [body];
   if (wrapUp) parts.push(wrapUp);
-  // Only document-producing skills get the save-footer; refactor/review/etc. don't
+  // Only document-producing skills get a save-footer; refactor/review/etc. don't
   // emit a file to save.
-  if (meta['skill-saves-document'] === 'true') parts.push(SAVE_FOOTER);
+  if (meta['skill-saves-document'] === 'true') {
+    parts.push(
+      schema && schema.outputPath
+        ? saveFooterForPath(schema.outputPath, schema.id)
+        : SAVE_FOOTER_ASK
+    );
+  }
 
   return `${fm}\n${parts.join('\n\n')}\n`;
 }
@@ -170,12 +219,31 @@ function ensureDir(dir) {
   fs.mkdirSync(dir, { recursive: true });
 }
 
+// Relative links are position-dependent, and compiling moves the text out of
+// prompts/<category>/ into a flat skill directory — so a link that resolved in
+// the source resolves to nothing in dist/, and the skill goes on to emit that
+// dead path into the documents it produces. Reference other prompts by name
+// inside a prompt body, never by relative path.
+function warnRelativeLinks(body, label) {
+  const found = [...body.matchAll(/\[[^\]]*\]\((\.[^)]+)\)/g)].map((m) => m[1]);
+  for (const target of new Set(found)) {
+    console.warn(
+      `[warn] ${label} — prompt body contains the relative link "${target}"; ` +
+      `it will not resolve once compiled. Reference the prompt by name instead.`
+    );
+  }
+  return found.length;
+}
+
+const SCHEMAS = loadSchemaHeaders();
+
 // Start each build from a clean dist so renamed/removed prompts don't leave stragglers.
 fs.rmSync(DIST_DIR, { recursive: true, force: true });
 
 let copilotBuilt = 0;
 let skillsBuilt = 0;
 let skipped = 0;
+let relativeLinkWarnings = 0;
 
 for (const category of fs.readdirSync(PROMPTS_DIR).sort()) {
   const categoryPath = path.join(PROMPTS_DIR, category);
@@ -202,6 +270,8 @@ for (const category of fs.readdirSync(PROMPTS_DIR).sort()) {
       continue;
     }
 
+    relativeLinkWarnings += warnRelativeLinks(promptContent, `${category}/${slug}`);
+
     // Copilot flavor — unchanged: the raw prompt block with {{PLACEHOLDERS}}.
     const copilotDir = path.join(DIST_DIR, 'copilot', category);
     ensureDir(copilotDir);
@@ -226,9 +296,13 @@ for (const category of fs.readdirSync(PROMPTS_DIR).sort()) {
 
     const skillDir = path.join(DIST_DIR, 'claude', 'skills', `${SKILL_PREFIX}${slug}`);
     ensureDir(skillDir);
+    const schema = meta['output-schema'] ? SCHEMAS[meta['output-schema'].trim()] : null;
+    if (meta['output-schema'] && !schema) {
+      console.warn(`[warn] ${category}/${slug} — declares output-schema "${meta['output-schema']}" but no schema file provides it`);
+    }
     fs.writeFileSync(
       path.join(skillDir, 'SKILL.md'),
-      buildSkillFile(meta, slug, skillBody, wrapUp)
+      buildSkillFile(meta, slug, skillBody, wrapUp, schema)
     );
     skillsBuilt++;
 
@@ -237,6 +311,9 @@ for (const category of fs.readdirSync(PROMPTS_DIR).sort()) {
 }
 
 console.log(`\nBuilt ${copilotBuilt} Copilot prompts, ${skillsBuilt} Claude skills${skipped ? `, skipped ${skipped}` : ''}.`);
+if (relativeLinkWarnings) {
+  console.log(`${relativeLinkWarnings} relative link(s) in prompt bodies will not resolve after compilation (see warnings above).`);
+}
 console.log('');
 console.log('Install into a repo:');
 console.log('  Copilot:     cp -r dist/copilot/*       /path/to/repo/.github/prompts/');

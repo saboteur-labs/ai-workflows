@@ -14,6 +14,50 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `schemas/` — machine contracts for the four prompts whose output is consumed
+  by an agent rather than only read by a human (`sab.product-spec/1`,
+  `sab.feature-spec/1`, `sab.features/1`, `sab.tasks/1`). Each declares the
+  document's required structure, ID scheme, dependency-graph invariants, and
+  conventional save path; `schemas/README.md` documents the DSL
+- `tools/lib/check-outputs.js` — schema engine with three jobs: assert each
+  schema still agrees with the output format authored in its prompt, validate a
+  produced document against its schema (including cross-document requirement
+  coverage via `--against`), and emit the parsed document as JSON for agents to
+  consume, with a dependency-respecting `execution_order`
+- `tools/lib/check_outputs.sh` and `.github/workflows/validate-outputs.yml` —
+  the drift check as a blocking local and CI check, wired into
+  `tools/validate.sh --check outputs`
+
+### Changed
+
+- `prompts/planning/write-feature-spec.md` and
+  `prompts/planning/write-product-spec.md` now emit stable `FR-N`, `US-N`, and
+  `OQ-N` identifiers, and require each requirement to reference the user story
+  it serves. This is the shared vocabulary that lets a feature breakdown be
+  checked against the spec it decomposes
+- The four spec/task prompts declare `output-schema:` in frontmatter; their
+  output contracts moved out of the prompt bodies into `schemas/`
+- `scripts/build-dist.js` gives document-producing skills a definite save path
+  taken from their schema's `output-path`, replacing a footer that invited the
+  model to infer a location from whichever folder looked relevant. Prompts with
+  no schema are now told to ask rather than guess
+- `prompts/planning/break-into-tasks.md` — the `{{GRANULARITY}}` placeholder no
+  longer sits inside the output template, where compilation substituted the
+  input's description into every task's Estimate field
+
+### Fixed
+
+- `prompts/planning/ideate-project.md` — the Next Steps instruction referenced
+  `write-feature-spec.md` as a relative markdown link from inside the prompt
+  body. Compilation moves that text into a flat skill directory where the path
+  resolves to nothing, and the skill then wrote the dead path into the concept
+  documents it produced. Other prompts are now referenced by name, and the
+  guidance matches the skill wrap-up (product spec for a whole product, feature
+  spec for one feature) instead of contradicting it
+- `scripts/build-dist.js` warns when a prompt body contains a relative link,
+  which cannot survive compilation — catching the defect at build time rather
+  than as a broken link in `dist/`
+
 - `prompts/code/audit-unused-code.md` — identifies unused imports, exports,
   functions, types, dead code paths, and unused dependencies across a
   codebase; produces a prioritised removal list for human or agent-driven

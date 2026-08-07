@@ -1,0 +1,38 @@
+schema: sab.feature-spec/1
+doc: feature-spec
+prompt: prompts/planning/write-feature-spec.md
+output-path: specs/features/{slug}.md
+
+# Consumed by an automated review step, which reads the Open questions section.
+# The FR/US/OQ IDs are the shared vocabulary that lets a feature breakdown
+# reference this spec's requirements and be checked against them.
+
+section Overview | required
+  heading: ## Overview
+section Goals | required
+  heading: ## Goals
+  list: bullet | min:1 | max:5
+section Non-goals | required
+  heading: ## Non-goals
+  list: bullet | min:1
+section User stories | required
+  heading: ## User stories
+  list: bullet | min:1 | id:US-{n:int} | match:As a .+, I want to .+ so that .+
+section Functional requirements | required
+  heading: ## Functional requirements
+  list: numbered | min:1 | id:FR-{n:int} | match:\b(MUST|SHOULD|MAY)\b | refs:US.id
+section Open questions | required
+  heading: ## Open questions
+  list: bullet | min:0 | id:OQ-{n:int} | empty-literal:None identified.
+section Out of scope (deferred) | required
+  heading: ## Out of scope (deferred)
+  list: bullet | min:0
+
+graph
+  unique: FR.id
+  sequential: FR.id
+  unique: US.id
+  sequential: US.id
+  unique: OQ.id
+  sequential: OQ.id
+  resolves: FR.refs -> US.id

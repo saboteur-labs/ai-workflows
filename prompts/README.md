@@ -67,6 +67,26 @@ to the relevant project's `.claude/skills/`).
 | [`planning/surface-architecture-decisions.md`](./planning/surface-architecture-decisions.md)               | high   | Discover and confirm implicit/explicit architecture decisions in a codebase, then hand off to write-adr |
 | [`planning/estimate-complexity.md`](./planning/estimate-complexity.md) | low    | Estimate the complexity and risk of a piece of work              |
 
+### Output schemas
+
+Four of these prompts produce documents that an agent reads rather than a
+person: `write-product-spec`, `write-feature-spec`, `break-into-features`, and
+`break-into-tasks`. Each declares `output-schema:` in its frontmatter and has a
+matching machine contract in [`../schemas/`](../schemas/README.md) covering the
+document's required structure, ID scheme, dependency-graph invariants, and
+conventional save path.
+
+The contract is stated twice on purpose — as the output format authored in the
+prompt, and as the schema — and `./tools/validate.sh --check outputs` asserts
+the two agree, so neither can drift unnoticed. To check a produced document:
+
+```bash
+node tools/lib/check-outputs.js --doc <file> --schema sab.tasks/1
+```
+
+The other planning prompts produce documents for human review and deliberately
+have no schema; a contract there would add ceremony without a consumer.
+
 ## testing/
 
 | Prompt                                                                 | Budget | Description                                                                |

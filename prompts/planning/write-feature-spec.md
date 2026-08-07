@@ -6,6 +6,7 @@ category: planning
 tags: [spec, planning, requirements, feature, design-doc]
 context_budget: low
 interfaces: [ide, chat, cli, api]
+output-schema: sab.feature-spec/1
 versions:
     - version: 1.0.0
       date: 2026-03-17
@@ -72,18 +73,23 @@ Include at least one item — if nothing is out of scope, the feature
 is probably under-specified.
 
 ## User stories
-List of user stories in the format:
-"As a [user type], I want to [action] so that [outcome]."
+List of user stories, each prefixed with a stable ID, numbered from 1:
+"US-1: As a [user type], I want to [action] so that [outcome]."
 Include only the stories directly addressed by this feature.
 
 ## Functional requirements
-Numbered list of specific, testable requirements.
-Each requirement must be independently verifiable.
-Use "must", "should", or "may" to indicate priority (RFC 2119).
+Numbered list of specific, testable requirements, each prefixed with a stable
+ID, numbered from 1 with no gaps:
+"FR-1: Users MUST be able to [X]. [US-1]"
+Each requirement must be independently verifiable, and must reference the
+user story it serves. Use MUST, SHOULD, or MAY to indicate priority
+(RFC 2119).
 
 ## Open questions
-Bullet list of unresolved questions that must be answered before or
-during implementation. If none, write "None identified."
+List of unresolved questions that must be answered before or during
+implementation, each prefixed with a stable ID:
+"OQ-1: [Question] — Impact: [which requirement IDs this blocks or changes]"
+If none, write "None identified."
 
 ## Out of scope (deferred)
 Bullet list of related features or improvements that are intentionally
@@ -105,6 +111,7 @@ Rules for the entire document:
 | ------------------------- | ---------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
 | `{{FEATURE_DESCRIPTION}}` | The feature idea in plain language. Can be rough — a sentence or a paragraph.                                          | `Allow users to export their activity history as a CSV file from the account settings page.`                                     |
 | `{{EXISTING_CONTEXT}}`    | Optional. Relevant background: existing system behavior, constraints, prior decisions. Remove the block if not needed. | `We already have a data export job that runs nightly for internal reporting. The user-facing export should reuse this pipeline.` |
+
 
 ## Low-context variant
 

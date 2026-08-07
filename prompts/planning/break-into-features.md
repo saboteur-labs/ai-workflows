@@ -6,6 +6,7 @@ category: planning
 tags: [features, breakdown, planning, vertical-slice, product, milestones]
 context_budget: medium
 interfaces: [ide, chat, cli, api]
+output-schema: sab.features/1
 versions:
     - version: 1.0.0
       date: 2026-06-17
@@ -129,6 +130,7 @@ wait for my answer before writing the file.
 | `{{PRODUCT_SPEC}}`    | The full product spec output from `write-product-spec.md`               | Yes      | _(paste full product spec)_            |
 | `{{MILESTONE_SCOPE}}` | Optional. Restrict the breakdown to one or more milestones from the spec | No       | `MVP`, `MVP and v1`, `v2 only`         |
 | `{{OUTPUT_PATH}}`     | Optional. Where to write the feature breakdown. Omit to be asked before the file is saved. | No | `docs/planning/features.md`            |
+
 
 ## Low-context variant
 
