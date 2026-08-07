@@ -333,8 +333,14 @@ const BULLET_RE = /^\s*[-*]\s*(?:\*\*([^*:]+?):\*\*|\*{0,2}([^:*]+?)\*{0,2}\s*:)
 
 // Lines belonging to a field whose value did not fit on its own line. Stops at
 // the next field, any heading, or a blank line once content has been gathered.
-function continuation(src, startIdx) {
-  const acc = [];
+//
+// This handles BOTH shapes, and the second is the dangerous one: a value that
+// begins on the field's line and hard-wraps onto the next reads as complete
+// while silently losing its tail. For "Done when" — the condition commits are
+// gated on — a truncated value is worse than an empty one, because nothing
+// downstream can tell it was cut.
+function continuation(src, startIdx, seed) {
+  const acc = seed ? [seed] : [];
   let j = startIdx + 1;
   for (; j < src.length; j++) {
     const nl = src[j];
@@ -372,9 +378,9 @@ function parseDocument(text, schema) {
         // A field whose value is empty on its own line continues onto the lines
         // below it — authors write multi-clause "Done when" as a bullet list,
         // and reading only the same-line remainder loses the whole condition.
-        let val = fm[2].trim();
-        if (!val) { const c = continuation(lines, li); val = c.value; li = c.next - 1; }
-        cur._fields[fm[1].trim()] = val;
+        const c = continuation(lines, li, fm[2].trim());
+        cur._fields[fm[1].trim()] = c.value;
+        li = c.next - 1;
       }
     }
     doc.items[item.name] = found;
@@ -406,9 +412,9 @@ function parseDocument(text, schema) {
       const line = bodyLines[li];
       const fm = FIELD_RE.exec(line);
       if (fm) {
-        let val = fm[2].trim();
-        if (!val) { const c = continuation(bodyLines, li); val = c.value; li = c.next - 1; }
-        entry._fields[fm[1].trim()] = val;
+        const cont = continuation(bodyLines, li, fm[2].trim());
+        entry._fields[fm[1].trim()] = cont.value;
+        li = cont.next - 1;
         continue;
       }
       const bm = line.match(BULLET_RE);

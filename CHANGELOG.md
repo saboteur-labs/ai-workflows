@@ -14,6 +14,12 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `tools/lib/check-outputs.js` emits `execution_waves` and `file_conflicts` for
+  task lists. `execution_order` is only one legal serialisation of the
+  dependency graph and discards the fact that any parallelism was available;
+  the waves preserve it. `file_conflicts` then covers what waves alone cannot —
+  two tasks can be dependency-independent and still edit the same file, which a
+  parallel runner discovers as a merge conflict it cannot resolve
 - `schemas/` — machine contracts for the four prompts whose output is consumed
   by an agent rather than only read by a human (`sab.product-spec/1`,
   `sab.feature-spec/1`, `sab.features/1`, `sab.tasks/1`). Each declares the
@@ -27,6 +33,16 @@ bottom, and open a new empty `[Unreleased]` block above it.
 - `tools/lib/check_outputs.sh` and `.github/workflows/validate-outputs.yml` —
   the drift check as a blocking local and CI check, wired into
   `tools/validate.sh --check outputs`
+
+### Fixed
+
+- `tools/lib/check-outputs.js` — field and bullet parsing lost data in two
+  ways. A bullet label written with the colon inside the bold
+  (`- **Total tasks:** 6`) left the closing `**` stranded at the head of the
+  value, failing every typed check; and a field value that wrapped onto the
+  following lines was read only as far as its first line. The truncating case
+  was the more dangerous of the two — a cut `Done when` still reads as present,
+  so nothing downstream could tell the condition had been shortened
 
 ### Changed
 
