@@ -13,7 +13,13 @@ A PR that does not satisfy these couplings will fail the
 
 Each entry defines a trigger (what changed) and the required co-changes
 (what must also change). "Required" means the PR is blocked without it.
-"Recommended" means CI will warn but not block.
+"Recommended" means no check enforces it, but a reviewer will expect it.
+
+`tools/lib/check_atomicity.sh` is what actually blocks, and this map is
+written to match it. Where the two disagree, the check wins and this file is
+the bug. Note that the check fires on *any* change to a file, not only on
+adding or removing one — modifying a prompt requires the same README update
+that adding one does.
 
 ---
 
@@ -31,7 +37,7 @@ Each entry defines a trigger (what changed) and the required co-changes
 | File to update      | Required / Recommended | What to change                                            |
 | ------------------- | ---------------------- | --------------------------------------------------------- |
 | `CHANGELOG.md`      | **Required**           | Add entry describing what changed and why                 |
-| `prompts/README.md` | Recommended            | Update description column if the prompt's purpose changed |
+| `prompts/README.md` | **Required**           | The check fires on any prompt change, not just added or removed ones. Update the description column if the purpose changed; otherwise the row still has to be touched |
 
 ### Deleting a prompt file
 
@@ -64,6 +70,7 @@ Each entry defines a trigger (what changed) and the required co-changes
 | File to update              | Required / Recommended | What to change                                                 |
 | --------------------------- | ---------------------- | -------------------------------------------------------------- |
 | `CHANGELOG.md`              | **Required**           | Add entry describing what changed                              |
+| `skills/README.md`          | **Required**           | Update the skill's row. Applies to skills nested under a category (`skills/<category>/<name>/`) — see the coverage gap below |
 | Sibling `-minimal/SKILL.md` | Recommended            | Check if the minimal variant needs updating to stay consistent |
 
 ### Deleting a skill directory
@@ -102,6 +109,7 @@ Each entry defines a trigger (what changed) and the required co-changes
 | File to update                       | Required / Recommended | What to change                             |
 | ------------------------------------ | ---------------------- | ------------------------------------------ |
 | `CHANGELOG.md`                       | **Required**           | Add entry                                  |
+| Parent directory `README.md`         | **Required**           | Update the file's row — the check fires on any change to a guide, not only on adding one |
 | `verified-against` field in the file | Recommended            | Update if external claims were re-verified |
 
 ### Completing a stub guide (`🔲 Stub` → `✅ Done`)
@@ -122,12 +130,13 @@ Each entry defines a trigger (what changed) and the required co-changes
 | `examples/README.md` | **Required**           | Add a row to the index table |
 | `CHANGELOG.md`       | **Required**           | Add entry                    |
 
-### Adding a step file to an existing example
+### Adding or modifying a step file in an existing example
 
-| File to update        | Required / Recommended | What to change                  |
-| --------------------- | ---------------------- | ------------------------------- |
-| Example's `README.md` | **Required**           | Add the step to the steps table |
-| `CHANGELOG.md`        | **Required**           | Add entry                       |
+| File to update        | Required / Recommended | What to change                                                        |
+| --------------------- | ---------------------- | ---------------------------------------------------------------------- |
+| `examples/README.md`  | **Required**           | This is the file the check looks for — any change under `examples/` needs it, not the example's own README |
+| Example's `README.md` | Recommended            | Add or update the step in the steps table                             |
+| `CHANGELOG.md`        | **Required**           | Add entry                                                             |
 
 ---
 
@@ -189,6 +198,25 @@ instruction. Required co-changes:
 | File to update | Required / Recommended | What to change |
 | -------------- | ---------------------- | -------------- |
 | `CHANGELOG.md` | **Required**           | Add entry      |
+
+---
+
+## Known gap: skills outside a category directory
+
+The `skills/README.md` coupling and the `-minimal` sibling check both match
+`skills/<category>/<name>/SKILL.md`. Five skills sit one level higher and are
+matched by neither:
+
+```
+skills/repo-maintenance/          skills/improve-prompt/
+skills/repo-maintenance-minimal/  skills/improve-agent/
+skills/freshness-check/
+```
+
+Changing one of these will not be blocked for a missing `skills/README.md`
+row, and adding a `context-budget: medium` skill there will not be blocked for
+a missing minimal variant. The couplings still apply — nothing enforces them,
+so satisfy them by hand until the check covers both layouts.
 
 ---
 
