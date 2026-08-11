@@ -33,6 +33,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
   half of the loop whose apply half is `skills/improve-agent/`, and follows
   that skill's append-only log convention so a signal recurring across
   sessions is detected rather than remembered
+- `schemas/sab.follow-up-work.v1.schema` — the contract for the follow-up-work
+  file `implement-feature` writes. Deferred work is read by the next session
+  and by an orchestrator choosing the next wave, which is what earns it a
+  schema rather than leaving it as prose. `sequential: Item.id` is what makes
+  an append-only log safe to extend across sessions: a second agent appending
+  `FU-4` over an existing `FU-4` fails the check instead of silently shadowing
+  the earlier entry
 - `schemas/` — machine contracts for the four prompts whose output is consumed
   by an agent rather than only read by a human (`sab.product-spec/1`,
   `sab.feature-spec/1`, `sab.features/1`, `sab.tasks/1`). Each declares the
@@ -72,6 +79,16 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `tools/lib/check-outputs.js` accepts a schema sourced from a skill, not only
+  from a prompt. A skill has no `## Prompt` block to check the schema against,
+  so its schema names the section holding the authored format with
+  `format-section:`, and the reciprocal `output-schema:` sits under the skill's
+  `metadata:` key — where the Agent Skills spec puts frontmatter it does not
+  define. The both-sides-declared invariant is unchanged, and now runs in the
+  skill direction too: a `SKILL.md` claiming a schema no file provides is
+  reported the same way a prompt's is
+- `tools/README.md` documents the `outputs` check, which was missing from the
+  check table, the `validate.sh` flag list, and the `lib/` inventory
 - `skills/coding/implement-feature/` records deferred work to a file rather
   than only to the session's implementation summary, which does not outlive
   the session that wrote it. The location resolves from the project's
