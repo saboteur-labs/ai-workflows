@@ -57,7 +57,7 @@ A PR that adds a prompt but does not update `prompts/README.md` and
 **Against outdated information:**
 
 - If your proposed content makes claims about external tools or standards,
-  run the `skills/repo-maintenance/freshness-check/` skill against your
+  run the `skills/freshness-check/` skill against your
   draft first and include the output in your proposal.
 - Flag any content with a natural shelf life using the `review-by`
   frontmatter field. See `templates/prompt-template.md` for usage.
@@ -101,6 +101,6 @@ repo correctly.
 | Add a new prompt          | `templates/prompt-template.md`, `guides/repo-maintenance/dependency-map.md`           |
 | Add a new skill           | `templates/skill-template.md`, `guides/repo-maintenance/dependency-map.md`            |
 | Add a new guide           | `templates/structures/guide-template.md`, `guides/repo-maintenance/dependency-map.md` |
-| Review repo for staleness | `skills/repo-maintenance/freshness-check/`                                            |
+| Review repo for staleness | `skills/freshness-check/`                                                             |
 | Understand repo structure | `guides/repo-maintenance/how-this-repo-is-structured.md`                              |
 | Propose any change        | `templates/change-proposal-template.md`                                               |

@@ -99,7 +99,7 @@ silently resolve them.
 ### 5. Run freshness check on external claims
 
 If your draft makes claims about external tools, standards, or
-specifications, run `skills/repo-maintenance/freshness-check/` against
+specifications, run `skills/freshness-check/` against
 the draft and include the output in the proposal's "Sources" section.
 
 ### 6. Write the proposal
@@ -152,7 +152,7 @@ describing the change in prose.
 1. Read `guides/repo-maintenance/dependency-map.md` for the list of
    file categories with `review-by` fields
 2. Identify files whose `review-by` date has passed or is within 30 days
-3. For each such file, run `skills/repo-maintenance/freshness-check/`
+3. For each such file, run `skills/freshness-check/`
 4. Produce a staleness report listing: file, `review-by` date, claims
    to verify, and recommended action (re-verify / update / no action)
 5. Do not make any changes — produce the report only. Changes require

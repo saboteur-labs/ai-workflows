@@ -49,6 +49,12 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- The freshness-check skill was referenced as living under
+  `skills/repo-maintenance/` in five places across `AGENTS.md`,
+  `guides/repo-maintenance/contributing-with-ai.md`, and
+  `skills/repo-maintenance/SKILL.md`. It lives at `skills/freshness-check/`,
+  so every instruction to run it named a path that does not exist — including
+  the two in the file agents are told to read before anything else
 - `tools/lib/check-outputs.js` — field and bullet parsing lost data in two
   ways. A bullet label written with the colon inside the bold
   (`- **Total tasks:** 6`) left the closing `**` stranded at the head of the
