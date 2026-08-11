@@ -1,6 +1,6 @@
 ---
 title: Retrospect a session into durable rules
-description: Review a finished session for the corrections, re-explanations, and missing context that slowed it down, and convert them into a small set of candidate rules — each routed to the artifact that should carry it. Use at the end of a session that went badly, or after repeating the same correction across sessions.
+description: Review a finished session for the corrections, re-explanations, and missing context that slowed it down, and convert them into a small set of candidate rules — each routed to the artifact that should carry it. Use when the user says "retrospect this session", "what slowed us down", "we kept going in circles", "you keep making that mistake", "turn that into a rule", or "how do I stop this happening again"; when the user asks why a session took more correction than it should have; or when the user is about to hand-edit CLAUDE.md or AGENTS.md, so the edit follows evidence rather than the most recent annoyance. Also offer it proactively at the end of a session that needed the same correction more than once. This skill produces standing rules for future sessions — for blog material from a session, use extract-postable-insights instead. Not for sessions that went well.
 category: agent-orchestration
 tags: [retrospective, self-improvement, tuning, feedback, rules, learning]
 context_budget: low
@@ -9,6 +9,9 @@ versions:
     - version: 1.0.0
       date: 2026-08-07
       note: Initial version
+    - version: 1.1.0
+      date: 2026-08-11
+      note: Trigger-oriented description; print the log entry when appending it; recurrence check reads every project's log
 ---
 
 # Retrospect a session into durable rules
@@ -100,10 +103,12 @@ For each candidate rule give:
 **Evidence:** [which signals from Step 1 support it, and how many times it fired.
                If previous retrospectives were supplied, check them: a signal
                that also appears there — including one previously discarded —
-               has fired again, and you must say so here.]
+               has fired again, and you must say so here, naming the project
+               whose log it appears in. A signal recurring across two projects
+               is evidence the cause is not local to either.]
 **Destination:** [exactly one — see the routing table below]
-**Confidence:** [high — appears in a previous retrospective too, or fired more
-                        than once this session, or once at real cost
+**Confidence:** [high — appears in a previous retrospective for any project, or
+                        fired more than once this session, or once at real cost
                  low  — fired once, cheaply; worth watching, not yet worth writing]
 
 Routing table:
@@ -166,6 +171,12 @@ would, write one checkable rule and name which file should carry it:
   graduates to high confidence with no further argument — which only works
   if the log is passed back in as `{{PRIOR_RETROSPECTIVES}}`. Used without
   it, the prompt still works, but the recurrence check falls back to memory.
+- Pass the logs for *every* project, not just the current one. Most of what
+  slows a session down is not repo-specific, so a project-scoped check sees
+  the same cause three times in three repos and discards it three times as
+  three unrelated one-offs. Reading globally also tells you where the rule
+  belongs: a signal confined to one project's log wants that project's
+  instructions, and one appearing across several wants a broader home.
 - The Step 3 discard list is the part people skip and then regret. Without
   it the same one-off gets re-litigated in every retrospective — and a
   discarded signal that shows up again is exactly the evidence that should
@@ -186,24 +197,41 @@ would, write one checkable rule and name which file should carry it:
 Used by the compiled Claude skill to rewrite the prompt's placeholders.
 
 - `SESSION_CONTEXT`: the session to retrospect — this conversation, or a transcript the user references
-- `PRIOR_RETROSPECTIVES`: this project's retrospective log
+- `PRIOR_RETROSPECTIVES`: the retrospective logs for every project, this one first
 - `TUNABLE_ARTIFACTS`: the files that may carry a rule, such as project instruction files, agent definitions, prompts, or skills
 
 ## Skill wrap-up
 
-Before Step 1, read `~/.claude/session-retrospectives/<project-slug>/log.md`
-if it exists and use it as the previous retrospectives — where `<project-slug>`
-is the current repository's directory name. This log is what makes the
-recurrence check real rather than a matter of memory.
+Before Step 1, read every `~/.claude/session-retrospectives/*/log.md` that
+exists and use them all as the previous retrospectives — each directory name
+is a project slug, and the current repository's directory name is this
+session's. These logs are what make the recurrence check real rather than a
+matter of memory.
+
+Read all of them, not only the current project's. A signal that fired once
+here and once in another repository has fired twice, and the second firing is
+what promotes it — scoping the check to one project makes a recurring problem
+look like a run of unrelated one-offs, which is how a real pattern gets
+discarded repeatedly. Weigh them differently, though: a prior firing in this
+project's log is direct evidence, while one in another project's log is
+evidence that the cause is not local to this repository, and therefore that
+the rule probably belongs somewhere broader than this repo's instructions.
+
+Reads are global; writes stay local. Append only to the current project's log.
 
 Present the candidate rules and ask which to apply. Apply only the ones the
 user approves, one destination file at a time, showing the edit before making
 it. Never apply a low-confidence rule without being asked to.
 
-Then append an entry to that log — creating the directory with `mkdir -p` the
-first time — whether or not any rule was applied, and including sessions that
-ran clean. A run of clean retrospectives is itself signal, and a signal that
-was discarded once and returns is the evidence that promotes it later.
+Then append an entry to the current project's log — creating the directory
+with `mkdir -p` the first time — whether or not any rule was applied, and
+including sessions that ran clean. A run of clean retrospectives is itself
+signal, and a signal that was discarded once and returns is the evidence that
+promotes it later.
+
+Print the entry in your reply as you append it, and say which file it went to.
+The log is the only thing this prompt writes without asking, so it is the one
+part the user cannot check unless you show it.
 
 ```
 ## <UTC date-time> — <project-slug>
