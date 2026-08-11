@@ -16,7 +16,7 @@ The repo has dedicated tooling for this:
 
 - `skills/repo-maintenance/` — the operating instructions for an agent
   working in this repo
-- `skills/repo-maintenance/freshness-check/` — assesses whether content
+- `skills/freshness-check/` — assesses whether content
   is likely still accurate before it enters the repo
 - `templates/change-proposal-template.md` — the required format for any
   proposed change

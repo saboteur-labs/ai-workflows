@@ -1,23 +1,25 @@
 # Output schemas
 
-Machine contracts for the prompts whose output is consumed by an agent rather
-than only read by a human.
+Machine contracts for the prompts and skills whose output is consumed by an
+agent rather than only read by a human.
 
-A prompt's `## Prompt` block carries the output format a model reads; the schema
-here carries the same contract in a form a program can check. Neither is
-generated from the other — instead `tools/lib/check-outputs.js --prompts`
-asserts they agree, so the two halves cannot drift apart unnoticed.
+The source carries the output format a model reads — a prompt in its `## Prompt`
+block, a skill in the section its schema names — and the schema here carries the
+same contract in a form a program can check. Neither is generated from the
+other; instead `tools/lib/check-outputs.js --prompts` asserts they agree, so the
+two halves cannot drift apart unnoticed.
 
-Only prompts with an agent downstream get a schema. `write-adr` and
+Only sources with an agent downstream get a schema. `write-adr` and
 `estimate-complexity` produce documents a person reads, and adding a contract
 there would buy nothing.
 
-| Schema | Prompt | Consumed by |
+| Schema | Source | Consumed by |
 | --- | --- | --- |
 | `sab.product-spec/1` | `write-product-spec` | `break-into-features`, automated open-question review |
 | `sab.feature-spec/1` | `write-feature-spec` | `break-into-tasks`, automated open-question review |
 | `sab.features/1` | `break-into-features` | `break-into-tasks` (per feature) |
 | `sab.tasks/1` | `break-into-tasks` | an automated implementation runner |
+| `sab.follow-up-work/1` | `implement-feature` (skill) | the next implementation session; an orchestrator planning the next wave |
 
 ## Using it
 
@@ -60,6 +62,20 @@ output-path: specs/features/{slug}/tasks.md
 The prompt must declare `output-schema: sab.tasks/1` in its frontmatter. The
 link is stated on both sides deliberately: a half-finished rename fails loudly
 instead of silently disabling validation.
+
+A schema may name a skill instead of a prompt, for output a skill produces
+directly:
+
+```
+skill: skills/coding/implement-feature/SKILL.md
+format-section: ## Deferred work
+```
+
+Declare one or the other, never both. A skill has no `## Prompt` block, so
+`format-section` names the section whose fenced block holds the authored format
+— that block is what the drift check reads. The reciprocal `output-schema:` goes
+under the skill's `metadata:` key, where the Agent Skills spec puts frontmatter
+it does not define, rather than at the top level as a prompt's does.
 
 `output-path` is where the document belongs, with `{slug}` standing for the
 kebab-cased name of the thing it covers. Location is part of the contract —

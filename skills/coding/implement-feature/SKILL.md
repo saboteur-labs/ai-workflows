@@ -17,6 +17,7 @@ metadata:
     version: "1.0"
     context-budget: medium
     interfaces: ide, chat, cli, api
+    output-schema: sab.follow-up-work/1
 ---
 
 # implement-feature
@@ -42,6 +43,10 @@ Identify:
 2. What the feature must not do or break (constraints and non-goals)
 3. Where the code lives (existing file structure, module conventions)
 4. What "done" looks like (acceptance criteria or definition of done)
+5. Whether deferred follow-up work already exists for this feature — see
+   "Deferred work" below for where to look. If an open item blocks what you
+   are about to build, say so and ask whether to clear it first or proceed
+   regardless.
 
 If you are missing 1 or 3 and cannot infer them from the codebase, state what
 you need before writing code.
@@ -70,10 +75,14 @@ you need before writing code.
    behave unexpectedly. Handle them explicitly. Do not leave unhandled
    exceptions, unvalidated inputs, or silent failures.
 
-6. **Write tests alongside implementation** — for each new function or
-   behaviour, write at least one test. Aim for: happy path, one edge case,
-   one failure case. If the project has no test suite, note this but still
-   write tests — suggest where they should go.
+6. **Write tests first** — before implementing a behaviour, check whether an
+   existing test already covers it, then write the test and confirm it fails
+   for the right reason. Write at least one test per new function or
+   behaviour. Aim for: happy path, one edge case, one failure case. Where a
+   test cannot be written first — an interface that is not yet settled, no
+   harness for the surface — write it immediately after and say why the order
+   was inverted. If the project has no test suite, note this but still write
+   tests, and suggest where they should go.
 
 7. **Verify before marking done** — run any available checks (linter, type
    checker, test suite) before declaring the implementation complete. Report
@@ -103,6 +112,48 @@ After all files, output a brief implementation summary:
 **Checks run:** [linter/type/test results, or "Not run — no toolchain available"]
 **Follow-up recommended:** [any deferred work, known gaps, or suggested next steps]
 ```
+
+---
+
+## Deferred work
+
+The "Follow-up recommended" line in the implementation summary is ephemeral —
+it lives in one session's output. Anything you defer must also be written to a
+durable file, or the next session starts without it.
+
+Resolve the location in this order:
+
+1. The location declared in `references/conventions.md` under "Deferred work",
+   if the project has filled it in.
+2. Otherwise `specs/features/{slug}/follow-up-work.md`, beside the feature's
+   `tasks.md`, where `{slug}` is the feature's kebab-cased name.
+3. If neither resolves — no conventions entry and no feature directory — ask
+   where it belongs. Do not infer a location from whichever folder looks
+   relevant.
+
+Create the file only when there is something to record, and append each item
+as the next `FU-{n}` in sequence, leaving existing entries untouched:
+
+```
+### FU-1: Short title of the deferred item
+
+**What:** What is deferred, in one or two sentences.
+**Why deferred:** Why it was not done as part of this implementation.
+**Context:** What the next implementer needs — files, constraints, what was
+already tried.
+**Relates to:** Task 4, or none
+**Raised:** YYYY-MM-DD
+**Resolved:** [ ]
+**Resolved on:**
+```
+
+Read the existing entries before appending. If this implementation resolved an
+open item, tick its `Resolved` box and fill `Resolved on` with today's date
+rather than letting it accumulate.
+
+If the feature came with a task list, tick the `Done` checkbox for each task
+you completed. Leave it unticked for a task you only partly implemented, and
+record the remainder here.
 
 ---
 

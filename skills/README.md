@@ -28,7 +28,7 @@ New skill? Use [`../templates/skill-template.md`](../templates/skill-template.md
 
 | Skill                                                                      | Budget | Description                                                   |
 | -------------------------------------------------------------------------- | ------ | ------------------------------------------------------------- |
-| [`coding/implement-feature/`](./coding/implement-feature/)                 | medium | Implement a feature from a spec — plan, code, test, validate  |
+| [`coding/implement-feature/`](./coding/implement-feature/)                 | medium | Implement a feature from a spec — plan, code, test, validate, record deferred work to `sab.follow-up-work/1` |
 | [`coding/implement-feature-minimal/`](./coding/implement-feature-minimal/) | low    | Low-context variant of implement-feature                      |
 | [`coding/debug-issue/`](./coding/debug-issue/)                             | low    | Systematically diagnose and fix a bug or unexpected behaviour |
 | [`coding/debug-issue-minimal/`](./coding/debug-issue-minimal/)             | low    | Low-context variant of debug-issue                            |
@@ -71,6 +71,6 @@ project-specific content when you copy a skill into a project:
 | File                         | Skill                          | What to fill in                                                       |
 | ---------------------------- | ------------------------------ | --------------------------------------------------------------------- |
 | `references/patterns.md`     | implement-feature, debug-issue | Project-specific code patterns, ORM usage, error handling conventions |
-| `references/conventions.md`  | implement-feature              | Naming, file structure, import style, git conventions                 |
+| `references/conventions.md`  | implement-feature              | Naming, file structure, import style, git conventions, deferred-work location |
 | `references/known-issues.md` | debug-issue                    | Known bugs, recurring failure modes, technical debt                   |
 | `references/domain.md`       | spec-writer                    | Domain language, entity names, business rules                         |

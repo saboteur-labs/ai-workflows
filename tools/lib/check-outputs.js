@@ -2,16 +2,18 @@
 /**
  * check-outputs.js — schema engine for agent-consumed prompt outputs.
  *
- * Each file in schemas/*.schema is the machine contract for what one prompt
- * produces. The pairing is declared on both sides — `prompt:` in the schema and
- * `output-schema:` in the prompt's frontmatter — so a half-renamed link fails
- * loudly instead of silently skipping validation. This file is the only thing
- * that reads the schema DSL, and it serves three jobs:
+ * Each file in schemas/*.schema is the machine contract for what one prompt or
+ * skill produces. The pairing is declared on both sides — `prompt:` or `skill:`
+ * in the schema and `output-schema:` in the source's frontmatter — so a
+ * half-renamed link fails loudly instead of silently skipping validation. This
+ * file is the only thing that reads the schema DSL, and it serves three jobs:
  *
  *   1. Drift check (`--prompts`)
- *      Assert every prompt's authored `## Prompt` output format agrees with its
- *      schema. This is what keeps the human-readable format and the machine
- *      contract from diverging — nothing is duplicated without being checked.
+ *      Assert every source's authored output format agrees with its schema.
+ *      This is what keeps the human-readable format and the machine contract
+ *      from diverging — nothing is duplicated without being checked. A prompt
+ *      carries that format in its `## Prompt` block; a skill has no such block,
+ *      so its schema names the section to read with `format-section:`.
  *
  *   2. Document validation (`--doc <file> --schema <id>`)
  *      Validate a produced spec / feature breakdown / task list against its
@@ -42,6 +44,7 @@ const path = require('path');
 
 const REPO_ROOT = path.join(__dirname, '..', '..');
 const PROMPTS_DIR = path.join(REPO_ROOT, 'prompts');
+const SKILLS_DIR = path.join(REPO_ROOT, 'skills');
 const SCHEMAS_DIR = path.join(REPO_ROOT, 'schemas');
 
 // ── Output helpers ───────────────────────────────────────────────────────────
@@ -136,6 +139,8 @@ function parseSchema(text) {
       if ((m = line.match(/^schema:\s*(.+)$/))) { schema.id = m[1].trim(); continue; }
       if ((m = line.match(/^doc:\s*(.+)$/))) { schema.doc = m[1].trim(); continue; }
       if ((m = line.match(/^prompt:\s*(.+)$/))) { schema.prompt = m[1].trim(); continue; }
+      if ((m = line.match(/^skill:\s*(.+)$/))) { schema.skill = m[1].trim(); continue; }
+      if ((m = line.match(/^format-section:\s*(.+)$/))) { schema.formatSection = m[1].trim(); continue; }
       if ((m = line.match(/^output-path:\s*(.+)$/))) { schema.outputPath = m[1].trim(); continue; }
       if ((m = line.match(/^item\s+(.+)$/))) {
         const a = parseAttrs(m[1]);
@@ -181,12 +186,12 @@ function parseSchema(text) {
   return schema;
 }
 
-// ── Schema registry (built from the prompt library) ──────────────────────────
+// ── Schema registry (built from the prompt and skill libraries) ──────────────
 
-// Reads schemas/*.schema and pairs each with the prompt it governs. The link is
-// declared twice on purpose — `prompt:` in the schema and `output-schema:` in
-// the prompt's frontmatter — so a broken or half-renamed pairing is caught
-// rather than silently skipping validation.
+// Reads schemas/*.schema and pairs each with the prompt or skill it governs.
+// The link is declared twice on purpose — `prompt:`/`skill:` in the schema and
+// `output-schema:` in the source's frontmatter — so a broken or half-renamed
+// pairing is caught rather than silently skipping validation.
 function loadSchemas() {
   const out = [];
   const linkErrors = [];
@@ -200,26 +205,47 @@ function loadSchemas() {
     const schema = parseSchema(fs.readFileSync(full, 'utf8'));
 
     if (!schema.id) { linkErrors.push(`${rel}: no "schema:" id declared`); continue; }
-    if (!schema.prompt) { linkErrors.push(`${rel}: no "prompt:" path declared`); continue; }
 
-    const promptFull = path.join(REPO_ROOT, schema.prompt);
-    if (!fs.existsSync(promptFull)) {
-      linkErrors.push(`${rel}: declares prompt "${schema.prompt}", which does not exist`);
+    // A schema is sourced from exactly one place: a prompt, whose authored
+    // format lives in its `## Prompt` block, or a skill, which has no such
+    // block and so must name the section carrying the format.
+    if (schema.prompt && schema.skill) {
+      linkErrors.push(`${rel}: declares both "prompt:" and "skill:" — a schema has one source`);
       continue;
     }
-    const content = fs.readFileSync(promptFull, 'utf8');
-    const declared = (content.match(/^output-schema:\s*(.+)$/m) || [])[1];
+    const sourcePath = schema.prompt || schema.skill;
+    if (!sourcePath) { linkErrors.push(`${rel}: no "prompt:" or "skill:" path declared`); continue; }
+
+    const sourceFull = path.join(REPO_ROOT, sourcePath);
+    if (!fs.existsSync(sourceFull)) {
+      linkErrors.push(
+        `${rel}: declares ${schema.prompt ? 'prompt' : 'skill'} "${sourcePath}", which does not exist`
+      );
+      continue;
+    }
+    if (schema.skill && !schema.formatSection) {
+      linkErrors.push(
+        `${rel}: no "format-section:" declared, so there is no authored format in ${sourcePath} ` +
+        `to check the schema against`
+      );
+      continue;
+    }
+
+    const content = fs.readFileSync(sourceFull, 'utf8');
+    // Skills keep non-spec frontmatter under `metadata:`, so the reciprocal
+    // declaration is indented there where a prompt's sits at the top level.
+    const declared = (content.match(/^\s*output-schema:\s*(.+)$/m) || [])[1];
     if (!declared) {
-      linkErrors.push(`${schema.prompt}: missing "output-schema: ${schema.id}" in frontmatter`);
+      linkErrors.push(`${sourcePath}: missing "output-schema: ${schema.id}" in frontmatter`);
     } else if (declared.trim() !== schema.id) {
       linkErrors.push(
-        `${schema.prompt}: frontmatter says "output-schema: ${declared.trim()}" but ${rel} claims "${schema.id}"`
+        `${sourcePath}: frontmatter says "output-schema: ${declared.trim()}" but ${rel} claims "${schema.id}"`
       );
     }
 
     // A document-producing prompt with no declared location leaves the compiled
     // skill guessing where to write — the failure this schema work exists to stop.
-    if (/^skill-saves-document:\s*true$/m.test(content) && !schema.outputPath) {
+    if (schema.prompt && /^skill-saves-document:\s*true$/m.test(content) && !schema.outputPath) {
       linkErrors.push(
         `${rel}: no "output-path:" declared, but ${schema.prompt} saves a document — ` +
         `the compiled skill would have to ask or guess where it belongs`
@@ -229,9 +255,11 @@ function loadSchemas() {
     out.push({
       schema,
       schemaPath: rel,
-      promptPath: schema.prompt,
-      promptBody: extractCodeBlock(content, '## Prompt') || '',
-      slug: path.basename(schema.prompt, '.md'),
+      sourcePath,
+      sourceBody: extractCodeBlock(content, schema.formatSection || '## Prompt') || '',
+      slug: schema.prompt
+        ? path.basename(sourcePath, '.md')
+        : path.basename(path.dirname(sourcePath)),
     });
   }
 
@@ -249,16 +277,38 @@ function loadSchemas() {
     }
   }
 
+  // The same check for skills, which nest deeper than one category level.
+  for (const full of findSkillFiles(SKILLS_DIR)) {
+    const rel = path.relative(REPO_ROOT, full);
+    const declared = (fs.readFileSync(full, 'utf8').match(/^\s*output-schema:\s*(.+)$/m) || [])[1];
+    if (declared && !out.some((e) => e.schema.id === declared.trim())) {
+      linkErrors.push(`${rel}: declares output-schema "${declared.trim()}" but no schemas/*.schema provides it`);
+    }
+  }
+
   return { entries: out, linkErrors };
 }
 
-// ── Job 1: prompt/schema drift check ─────────────────────────────────────────
+// Every SKILL.md under skills/, at whatever depth it sits.
+function findSkillFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const found = [];
+  for (const name of fs.readdirSync(dir).sort()) {
+    const full = path.join(dir, name);
+    if (fs.statSync(full).isDirectory()) found.push(...findSkillFiles(full));
+    else if (name === 'SKILL.md') found.push(full);
+  }
+  return found;
+}
 
-function checkPromptDrift(entry) {
+// ── Job 1: source/schema drift check ─────────────────────────────────────────
+
+function checkFormatDrift(entry) {
   const errors = [];
-  const { schema, promptBody, promptPath } = entry;
-  if (!promptBody) {
-    errors.push('no ## Prompt code block to check the schema against');
+  const { schema, sourceBody, sourcePath } = entry;
+  if (!sourceBody) {
+    const where = schema.formatSection ? `"${schema.formatSection}"` : '## Prompt';
+    errors.push(`no code block under ${where} to check the schema against`);
     return errors;
   }
 
@@ -267,18 +317,18 @@ function checkPromptDrift(entry) {
     // where the schema declares a capture. Compare on the literal segments.
     const literal = item.heading.raw.replace(/\{[a-zA-Z0-9_]+:[a-zA-Z0-9_]+\}/g, '').trim();
     const stem = literal.split(/\s*\{/)[0].replace(/[:\s]+$/, '');
-    if (stem && !promptBody.includes(stem)) {
+    if (stem && !sourceBody.includes(stem)) {
       errors.push(`item ${item.name}: authored format has no heading matching "${item.heading.raw}"`);
     }
     for (const f of item.fields) {
-      if (!promptBody.includes(`**${f.label}:**`)) {
+      if (!sourceBody.includes(`**${f.label}:**`)) {
         errors.push(`item ${item.name}: authored format is missing field "**${f.label}:**"`);
       }
     }
     // Fields must appear in the order the schema declares, or the parser and
     // the reader disagree about what the document means.
     const positions = item.fields
-      .map((f) => ({ label: f.label, at: promptBody.indexOf(`**${f.label}:**`) }))
+      .map((f) => ({ label: f.label, at: sourceBody.indexOf(`**${f.label}:**`) }))
       .filter((p) => p.at !== -1);
     for (let i = 1; i < positions.length; i++) {
       if (positions[i].at < positions[i - 1].at) {
@@ -295,17 +345,17 @@ function checkPromptDrift(entry) {
     if (!sec.heading) continue;
     const literal = sec.heading.raw.replace(/\{[a-zA-Z0-9_]+:[a-zA-Z0-9_]+\}/g, '').trim();
     const stem = literal.replace(/[:\s]+$/, '');
-    if (stem && !promptBody.includes(stem)) {
+    if (stem && !sourceBody.includes(stem)) {
       errors.push(`section ${sec.name}: authored format has no heading "${sec.heading.raw}"`);
     }
     for (const b of sec.bullets) {
-      if (!promptBody.includes(b.label)) {
+      if (!sourceBody.includes(b.label)) {
         errors.push(`section ${sec.name}: authored format is missing bullet "${b.label}"`);
       }
     }
     if (sec.list && sec.list.opts.id) {
       const prefix = sec.list.opts.id.split('{')[0];
-      if (prefix && !promptBody.includes(prefix)) {
+      if (prefix && !sourceBody.includes(prefix)) {
         errors.push(
           `section ${sec.name}: schema declares IDs "${sec.list.opts.id}" but the authored ` +
           `format never shows the "${prefix}" prefix — produced docs will have no stable IDs`
@@ -318,7 +368,7 @@ function checkPromptDrift(entry) {
     errors.push(`unrecognised schema lines: ${schema.unknown.slice(0, 3).join(' / ')}`);
   }
 
-  return errors.map((e) => `${promptPath}: ${e}`);
+  return errors.map((e) => `${sourcePath}: ${e}`);
 }
 
 // ── Job 2/3: document parsing ────────────────────────────────────────────────
@@ -1009,7 +1059,7 @@ function main(argv) {
   if (args.list) {
     for (const e of registry) {
       const counts = `${e.schema.items.length} items, ${e.schema.sections.length} sections, ${e.schema.graph.length} graph checks`;
-      console.log(`${e.schema.id.padEnd(22)} ${e.schemaPath.padEnd(38)} → ${e.promptPath}  (${counts})`);
+      console.log(`${e.schema.id.padEnd(22)} ${e.schemaPath.padEnd(38)} → ${e.sourcePath}  (${counts})`);
     }
     for (const e of linkErrors) console.log(`${RED}FAIL${RESET}  ${e}`);
     return linkErrors.length ? 1 : 0;
@@ -1026,21 +1076,21 @@ function main(argv) {
       console.log(`${RED}FAIL${RESET}  ${e}`);
     }
     for (const entry of registry) {
-      const errors = checkPromptDrift(entry);
+      const errors = checkFormatDrift(entry);
       if (errors.length) {
         failed = true;
         for (const e of errors) console.log(`${RED}FAIL${RESET}  ${e}`);
       } else if (!args.quiet) {
-        console.log(`${GREEN}PASS${RESET}  ${entry.promptPath} → ${entry.schema.id}`);
+        console.log(`${GREEN}PASS${RESET}  ${entry.sourcePath} → ${entry.schema.id}`);
       }
     }
     if (failed) {
       console.log('');
-      console.log('  A schema in schemas/ and the output format authored in its prompt disagree.');
+      console.log('  A schema in schemas/ and the output format authored in its source disagree.');
       console.log('  Fix whichever is wrong — they are the machine and human halves of one contract.');
       return 1;
     }
-    console.log(`${GREEN}PASS${RESET}  ${registry.length} schemas consistent with their prompts' authored formats.`);
+    console.log(`${GREEN}PASS${RESET}  ${registry.length} schemas consistent with their sources' authored formats.`);
     return 0;
   }
 

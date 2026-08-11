@@ -8,4 +8,4 @@ content.
 | -------------------------------------------------------------------- | ------- | ------------------------------------------------------ |
 | [`how-this-repo-is-structured.md`](./how-this-repo-is-structured.md) | ✅ Done | Authoritative reference for what lives where and why   |
 | [`dependency-map.md`](./dependency-map.md)                           | ✅ Done | Which files must change together — enforces atomicity  |
-| [`contributing-with-ai.md`](./contributing-with-ai.md)               | ✅ Done | How to use this repo's own skills to propose additions |
+| [`contributing-with-ai.md`](./contributing-with-ai.md)               | ✅ Done | How to use `skills/repo-maintenance/` and `skills/freshness-check/` to propose additions |
