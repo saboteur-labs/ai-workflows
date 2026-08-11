@@ -12,6 +12,9 @@ versions:
     - version: 1.1.0
       date: 2026-08-11
       note: Trigger-oriented description; print the log entry when appending it; recurrence check reads every project's log
+    - version: 1.2.0
+      date: 2026-08-11
+      note: Routing table gains enforcement and user-level destinations
 ---
 
 # Retrospect a session into durable rules
@@ -112,17 +115,33 @@ For each candidate rule give:
                  low  — fired once, cheaply; worth watching, not yet worth writing]
 
 Routing table:
-| If the fix belongs in…                                      | Destination           |
-| ----------------------------------------------------------- | --------------------- |
-| how this project must always be worked on                   | project instructions  |
-| the wording or steps of a specific prompt or skill you ran   | that prompt or skill  |
-| the behaviour of a specific subagent                         | that agent definition |
-| a fact about the codebase that the code itself should state  | the code or its docs  |
-| nothing — it was a one-off                                   | discard               |
+| If the fix belongs in…                                        | Destination            |
+| ------------------------------------------------------------- | ---------------------- |
+| a machine, not a reader — the trigger is detectable and the condition checkable | enforcement: a hook or a check |
+| how this project must always be worked on                     | project instructions   |
+| how you must work in every repository, not just this one      | user-level instructions |
+| the wording or steps of a specific prompt or skill you ran     | that prompt or skill   |
+| the behaviour of a specific subagent                           | that agent definition  |
+| a fact about the codebase that the code itself should state    | the code or its docs   |
+| nothing — it was a one-off                                     | discard                |
 
-Only name a destination that appears in the list of tunable artifacts — the
-one supplied above, or the one you listed yourself. If the right destination
-is not in that list, say so rather than picking the nearest available one.
+Try the first row before the others. A rule with a detectable trigger and a
+checkable condition should be enforced, not written down: an instruction is
+advisory and competes for attention with everything else in the file, while a
+check runs every time whether anyone remembered it or not. Prefer enforcement
+especially where the cost of the rule being missed is unrecoverable.
+
+Enforcement and user-level instructions are the two destinations that will not
+appear in the tunable-artifact list, because neither is a file in this project.
+Name them anyway when they are right, and say what would carry the rule — the
+event a hook would fire on, or the instruction file that would need creating.
+
+Otherwise, only name a destination that appears in the list of tunable
+artifacts — the one supplied above, or the one you listed yourself. If the
+right destination is neither in that list nor one of the two above, say so
+rather than picking the nearest available one. A rule filed somewhere it does
+not belong is worse than one left unfiled: it will be read by sessions it was
+never meant for, and missed by the ones it was.
 
 Step 3 — Discarded:
 List the signals you did not promote and why in a few words each. This
@@ -183,7 +202,14 @@ would, write one checkable rule and name which file should carry it:
   promote it.
 - If a rule keeps being written but sessions keep violating it, the rule is
   in the wrong place — an instruction the model reads but does not act on
-  usually needs to be a hook or a check, not a sentence.
+  usually needs to be a hook or a check, not a sentence. This is the first
+  row of the routing table, not a last resort: reach for it whenever the
+  trigger is detectable and the condition checkable, and always where being
+  missed costs something unrecoverable.
+- An enforcement rule needs testing against the shapes it will really meet.
+  A matcher written from three remembered examples tends to miss the fourth
+  and fire on something harmless, and a check that misfires quietly gets
+  disabled. Write the cases down, including the ones that must *not* trigger.
 - Related prompts:
   [`agent-orchestration/summarize-for-handoff.md`](./summarize-for-handoff.md),
   [`agent-orchestration/self-critique-loop.md`](./self-critique-loop.md)

@@ -83,6 +83,18 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `prompts/agent-orchestration/retrospect-session.md` (v1.2.0) — the routing
+  table gains two destinations it was missing, both found by failing to route a
+  real rule. `enforcement: a hook or a check` goes first, because a rule with a
+  detectable trigger and a checkable condition should be executed rather than
+  read: an instruction competes for attention with everything else in the file,
+  a check does not. `user-level instructions` covers a rule that holds in every
+  repository, which previously had to be misfiled into one project's
+  instructions or dropped. Both are exempt from the tunable-artifact
+  constraint, since neither is a file in the project being retrospected. The
+  Notes section also warns that an enforcement rule needs testing against the
+  shapes it will really meet — a matcher written from remembered examples
+  misses the fourth and fires on something harmless
 - `AGENTS.md` — a "Landing a change" section: do not base a PR on another open
   PR, and confirm a merged PR's content actually reached the base branch before
   deleting its branch. A stacked PR whose base merges into the default branch
