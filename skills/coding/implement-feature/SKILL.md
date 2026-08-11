@@ -17,6 +17,7 @@ metadata:
     version: "1.0"
     context-budget: medium
     interfaces: ide, chat, cli, api
+    output-schema: sab.follow-up-work/1
 ---
 
 # implement-feature

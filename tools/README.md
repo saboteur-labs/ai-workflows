@@ -136,6 +136,7 @@ CI check suite so failures are caught before they reach GitHub.
 ./tools/validate.sh --check frontmatter
 ./tools/validate.sh --check atomicity
 ./tools/validate.sh --check placeholders
+./tools/validate.sh --check outputs
 ./tools/validate.sh --check freshness
 
 # Only check files changed since last commit (fastest for pre-push)
@@ -153,6 +154,7 @@ CI check suite so failures are caught before they reach GitHub.
 | `atomicity`    | Yes           | CHANGELOG + README index tables updated when content changes          |
 | `links`        | Yes           | All internal markdown links resolve to real files                     |
 | `placeholders` | Yes           | No `{{PLACEHOLDERS}}` outside code fences, no stray stub markers      |
+| `outputs`      | Yes           | Each schema in `schemas/` agrees with the format authored in the prompt or skill it governs |
 | `freshness`    | No (warns)    | `review-by` dates not expired or expiring within 30 days              |
 
 Exit codes: `0` = all blocking checks passed, `1` = blocking failure,
@@ -180,6 +182,8 @@ need to call these directly.
 | `lib/check_links.sh`        | Shell    | Verifies all internal markdown links resolve to real files      |
 | `lib/check_placeholders.sh` | Shell    | Detects unfilled `{{PLACEHOLDERS}}` and stray stub markers      |
 | `lib/check_freshness.sh`    | Shell    | Warns on expired or soon-expiring `review-by` dates             |
+| `lib/check_outputs.sh`      | Shell    | Wrapper around the schema engine for `validate.sh` and CI       |
+| `lib/check-outputs.js`      | Node.js  | Schema engine: drift check, document validation, derived JSON   |
 | `lib/chunk_file.py`         | Python   | Token-accurate chunking using tiktoken (stub)                   |
 | `lib/fetch_prompt.js`       | Node.js  | Frontmatter parsing and remote fetch (stub)                     |
 

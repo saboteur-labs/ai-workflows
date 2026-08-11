@@ -1,0 +1,29 @@
+schema: sab.follow-up-work/1
+doc: follow-up-work
+skill: skills/coding/implement-feature/SKILL.md
+format-section: ## Deferred work
+output-path: specs/features/{slug}/follow-up-work.md
+
+# Written during implementation, read by the next implementation session and by
+# an orchestrator deciding what the next wave of work should contain.
+#
+# There is no Summary section on purpose: the only count worth stating is how
+# many items are still open, `eq:count(Item)` can assert a total but not that,
+# and a hand-maintained counter nobody checks drifts from the list below it.
+#
+# "Relates to" is plain text rather than `refs:Task.id` — the task IDs it names
+# live in the sibling tasks.md, and refs resolve within one document.
+
+item Item | min:1
+  heading: ### FU-{id:int}: {title:text}
+  field: What | required | text
+  field: Why deferred | required | text
+  field: Context | required | text
+  field: Relates to | optional | text
+  field: Raised | required | text
+  field: Resolved | required | checkbox
+  field: Resolved on | optional | text
+
+graph
+  unique: Item.id
+  sequential: Item.id
