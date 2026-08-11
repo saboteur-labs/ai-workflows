@@ -26,3 +26,9 @@ path, which is expected — they are examples, not real specs.
 each schema agrees with the output format authored in its prompt. So when a
 schema or a prompt's output format changes, run the two commands above — the
 examples are the most likely thing to drift, and nothing else will catch it.
+
+Write them at the repo's normal width. Conformance does not depend on where
+lines break: the checker joins a list entry or field value that wraps onto
+indented continuation lines, so a user story may carry its `so that` clause
+and a requirement its `[US-n]` reference on the following line. A blank line
+ends an entry, so prose after a list is never absorbed into it.

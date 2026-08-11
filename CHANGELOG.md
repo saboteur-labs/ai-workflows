@@ -53,29 +53,33 @@ bottom, and open a new empty `[Unreleased]` block above it.
 - `tools/lib/check_outputs.sh` and `.github/workflows/validate-outputs.yml` —
   the drift check as a blocking local and CI check, wired into
   `tools/validate.sh --check outputs`
-
-### Fixed
-
-- The freshness-check skill was referenced as living under
-  `skills/repo-maintenance/` in five places across `AGENTS.md`,
-  `guides/repo-maintenance/contributing-with-ai.md`, and
-  `skills/repo-maintenance/SKILL.md`. It lives at `skills/freshness-check/`,
-  so every instruction to run it named a path that does not exist — including
-  the two in the file agents are told to read before anything else
-- `tools/lib/check-outputs.js` — field and bullet parsing lost data in two
-  ways. A bullet label written with the colon inside the bold
-  (`- **Total tasks:** 6`) left the closing `**` stranded at the head of the
-  value, failing every typed check; and a field value that wrapped onto the
-  following lines was read only as far as its first line. The truncating case
-  was the more dangerous of the two — a cut `Done when` still reads as present,
-  so nothing downstream could tell the condition had been shortened
-- `examples/spec-to-implementation/` — the worked examples did not conform to
-  the schemas their own prompts declare. `01-write-spec.md` predated the
-  `FR-N`/`US-N`/`OQ-N` identifiers and RFC 2119 keywords, and
-  `02-break-into-tasks.md` was missing the required `Done` checkbox on every
-  task. Both now validate against `sab.feature-spec/1` and `sab.tasks/1`, and
-  the downstream references to spec requirements in `02` and `03` use the
-  `FR-N` scheme rather than bare numbers
+- `prompts/code/audit-unused-code.md` — identifies unused imports, exports,
+  functions, types, dead code paths, and unused dependencies across a
+  codebase; produces a prioritised removal list for human or agent-driven
+  cleanup
+- `prompts/planning/ideate-project.md` — interactive ideation prompt that
+  turns a bare-bones idea into a structured concept document; includes
+  competitive landscape, caveats, and iteration support via Mode B
+- `prompts/planning/write-product-spec.md` — expands a concept document from
+  `ideate-project.md` into a milestone-organized product spec with testable
+  requirements, user personas, and constraints derived from the concept's
+  caveats
+- `prompts/code/audit-codebase-structure.md` — analyses file and folder
+  structure for empty directories, dead modules, misplaced files, excess
+  depth, test organisation issues, and naming inconsistencies; produces a
+  prioritised change list suitable for direct input to a restructuring session
+- `prompts/code/extract-reusable-react-components.md` — scans React component
+  files for duplicated JSX structure, repeated layout wrappers, shared
+  conditional rendering patterns, and tightly coupled fragments; produces a
+  prioritised extraction list with suggested component names and props
+- `prompts/planning/surface-architecture-decisions.md` — multi-phase
+  facilitation prompt that discovers explicit and implicit architectural
+  decisions in a codebase, confirms intent with the user, gathers context,
+  and hands off to `write-adr` with all required fields pre-filled
+- `scripts/build-dist.js` — compiles all prompts into IDE-ready distribution
+  formats under `dist/`: Copilot (`.github/prompts/`) and Claude Code
+  (`.claude/commands/`); skips files missing `title` frontmatter or a
+  `## Prompt` block
 
 ### Changed
 
@@ -116,9 +120,43 @@ bottom, and open a new empty `[Unreleased]` block above it.
 - `prompts/planning/break-into-tasks.md` — the `{{GRANULARITY}}` placeholder no
   longer sits inside the output template, where compilation substituted the
   input's description into every task's Estimate field
+- `prompts/planning/write-adr.md` (v1.1.0) — added interactive file-output
+  step: after generating the ADR, prompts the user to write it to a file;
+  auto-detects the ADR directory and proposes the next sequential filename;
+  added cross-reference to `surface-architecture-decisions.md`
 
 ### Fixed
 
+- The freshness-check skill was referenced as living under
+  `skills/repo-maintenance/` in five places across `AGENTS.md`,
+  `guides/repo-maintenance/contributing-with-ai.md`, and
+  `skills/repo-maintenance/SKILL.md`. It lives at `skills/freshness-check/`,
+  so every instruction to run it named a path that does not exist — including
+  the two in the file agents are told to read before anything else
+- `tools/lib/check-outputs.js` — list entries that wrapped onto indented
+  continuation lines were read only as far as their first line, so a user story
+  lost its `so that` clause and a requirement lost its `[US-n]` reference. This
+  was the remaining half of the field-continuation fix: documents had to be
+  authored as single long lines to validate, against the repo's own wrapping
+  style. Indentation is required for a continuation and a blank line ends an
+  entry, so prose following a list is never absorbed into it
+- `examples/spec-to-implementation/01-write-spec.md` — the user stories,
+  requirements, and open questions are wrapped at the normal width again, now
+  that conformance no longer depends on line breaks
+- `tools/lib/check-outputs.js` — field and bullet parsing lost data in two
+  ways. A bullet label written with the colon inside the bold
+  (`- **Total tasks:** 6`) left the closing `**` stranded at the head of the
+  value, failing every typed check; and a field value that wrapped onto the
+  following lines was read only as far as its first line. The truncating case
+  was the more dangerous of the two — a cut `Done when` still reads as present,
+  so nothing downstream could tell the condition had been shortened
+- `examples/spec-to-implementation/` — the worked examples did not conform to
+  the schemas their own prompts declare. `01-write-spec.md` predated the
+  `FR-N`/`US-N`/`OQ-N` identifiers and RFC 2119 keywords, and
+  `02-break-into-tasks.md` was missing the required `Done` checkbox on every
+  task. Both now validate against `sab.feature-spec/1` and `sab.tasks/1`, and
+  the downstream references to spec requirements in `02` and `03` use the
+  `FR-N` scheme rather than bare numbers
 - `prompts/planning/ideate-project.md` — the Next Steps instruction referenced
   `write-feature-spec.md` as a relative markdown link from inside the prompt
   body. Compilation moves that text into a flat skill directory where the path
@@ -129,43 +167,6 @@ bottom, and open a new empty `[Unreleased]` block above it.
 - `scripts/build-dist.js` warns when a prompt body contains a relative link,
   which cannot survive compilation — catching the defect at build time rather
   than as a broken link in `dist/`
-
-- `prompts/code/audit-unused-code.md` — identifies unused imports, exports,
-  functions, types, dead code paths, and unused dependencies across a
-  codebase; produces a prioritised removal list for human or agent-driven
-  cleanup
-- `prompts/planning/ideate-project.md` — interactive ideation prompt that
-  turns a bare-bones idea into a structured concept document; includes
-  competitive landscape, caveats, and iteration support via Mode B
-- `prompts/planning/write-product-spec.md` — expands a concept document from
-  `ideate-project.md` into a milestone-organized product spec with testable
-  requirements, user personas, and constraints derived from the concept's
-  caveats
-- `prompts/code/audit-codebase-structure.md` — analyses file and folder
-  structure for empty directories, dead modules, misplaced files, excess
-  depth, test organisation issues, and naming inconsistencies; produces a
-  prioritised change list suitable for direct input to a restructuring session
-- `prompts/code/extract-reusable-react-components.md` — scans React component
-  files for duplicated JSX structure, repeated layout wrappers, shared
-  conditional rendering patterns, and tightly coupled fragments; produces a
-  prioritised extraction list with suggested component names and props
-- `prompts/planning/surface-architecture-decisions.md` — multi-phase
-  facilitation prompt that discovers explicit and implicit architectural
-  decisions in a codebase, confirms intent with the user, gathers context,
-  and hands off to `write-adr` with all required fields pre-filled
-- `scripts/build-dist.js` — compiles all prompts into IDE-ready distribution
-  formats under `dist/`: Copilot (`.github/prompts/`) and Claude Code
-  (`.claude/commands/`); skips files missing `title` frontmatter or a
-  `## Prompt` block
-
-### Changed
-
-- `prompts/planning/write-adr.md` (v1.1.0) — added interactive file-output
-  step: after generating the ADR, prompts the user to write it to a file;
-  auto-detects the ADR directory and proposes the next sequential filename;
-  added cross-reference to `surface-architecture-decisions.md`
-
----
 
 ## [1.0.0] — 2026-03-18
 

@@ -513,19 +513,44 @@ function parseList(bodyLines, listSpec) {
     idRe = new RegExp(`^\\s*(?:[-*]\\s*|\\d+[.)]\\s*)?\\*{0,2}${escapeRe(prefix)}-(\\d+)\\*{0,2}\\s*[:.\\-]?\\s*(.*)$`);
   }
 
+  const ENTRY_RE = /^\s*(?:[-*]\s+|\d+[.)]\s+)(.+)$/;
+  // A wrapped entry continues on indented lines that start no entry of their
+  // own. Without this an entry is read as far as its first line and the tail is
+  // dropped in silence — the same defect fixed for fields, and the reason a
+  // user story loses its "so that" clause and a requirement loses its [US-n]
+  // reference when authored at a sane column width.
+  //
+  // Indentation is the discriminator, and it is required: an unindented line
+  // after a list is far more often the prose that follows the list than a
+  // continuation of it, and absorbing prose into the last entry would corrupt
+  // a value that currently parses correctly.
+  const isContinuation = (line) => /^\s+\S/.test(line) && !ENTRY_RE.test(line);
+
+  let cur = null;
+  const open = (entry) => { out.push(entry); cur = entry; };
+
   for (const line of bodyLines) {
-    if (!line.trim()) continue;
-    if (idRe) {
-      const m = idRe.exec(line);
-      if (m) { out.push({ id: Number(m[1]), text: m[2].trim(), raw: line.trim() }); continue; }
-      // Unprefixed entries still count as list entries, so a missing ID is
-      // reported as a violation rather than silently vanishing.
-      const plain = line.match(/^\s*(?:[-*]\s+|\d+[.)]\s+)(.+)$/);
-      if (plain) out.push({ id: null, text: plain[1].trim(), raw: line.trim() });
+    // A blank line closes the current entry, so trailing prose separated from
+    // the list cannot be absorbed into it.
+    if (!line.trim()) { cur = null; continue; }
+    if (cur && isContinuation(line)) {
+      cur.text = `${cur.text} ${line.trim()}`;
+      cur.raw = `${cur.raw} ${line.trim()}`;
       continue;
     }
-    const plain = line.match(/^\s*(?:[-*]\s+|\d+[.)]\s+)(.+)$/);
-    if (plain) out.push({ id: null, text: plain[1].trim(), raw: line.trim() });
+    if (idRe) {
+      const m = idRe.exec(line);
+      if (m) { open({ id: Number(m[1]), text: m[2].trim(), raw: line.trim() }); continue; }
+      // Unprefixed entries still count as list entries, so a missing ID is
+      // reported as a violation rather than silently vanishing.
+      const plain = line.match(ENTRY_RE);
+      if (plain) { open({ id: null, text: plain[1].trim(), raw: line.trim() }); continue; }
+      cur = null;
+      continue;
+    }
+    const plain = line.match(ENTRY_RE);
+    if (plain) { open({ id: null, text: plain[1].trim(), raw: line.trim() }); continue; }
+    cur = null;
   }
   return out;
 }
