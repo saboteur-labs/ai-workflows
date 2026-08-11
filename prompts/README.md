@@ -102,4 +102,4 @@ have no schema; a contract there would add ceremony without a consumer.
 | [`agent-orchestration/decompose-task.md`](./agent-orchestration/decompose-task.md)               | low    | Break a complex task into independently executable sub-tasks  |
 | [`agent-orchestration/summarize-for-handoff.md`](./agent-orchestration/summarize-for-handoff.md) | low    | Summarize session state for handoff to a new session or agent |
 | [`agent-orchestration/self-critique-loop.md`](./agent-orchestration/self-critique-loop.md)       | low    | Ask the model to critique and improve its own output          |
-| [`agent-orchestration/retrospect-session.md`](./agent-orchestration/retrospect-session.md)       | low    | Turn a session's corrections into candidate rules, routed to the artifact that should carry each |
+| [`agent-orchestration/retrospect-session.md`](./agent-orchestration/retrospect-session.md)       | low    | Turn a session's corrections into candidate rules, routed to the artifact that should carry each, and print the log entry it appends |

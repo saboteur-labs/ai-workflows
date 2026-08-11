@@ -124,10 +124,25 @@ function extractCodeBlock(body, heading) {
 }
 
 // Extracts the prose of a `## Heading` section up to the next `## ` heading.
+// A fenced block may legitimately contain one as sample content (a log-entry
+// template, an example document); ending the section there would silently
+// truncate the fence out of the compiled skill, so only headings that appear
+// in prose close the section.
 function extractSection(body, heading) {
-  const re = new RegExp(`\\n${heading}\\n([\\s\\S]*?)(?=\\n## |$)`);
-  const match = body.match(re);
-  return match ? match[1].trim() : null;
+  const lines = body.split('\n');
+  const start = lines.indexOf(heading);
+  if (start === -1) return null;
+
+  const collected = [];
+  let inFence = false;
+  for (let i = start + 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*```/.test(line)) inFence = !inFence;
+    if (!inFence && line.startsWith('## ')) break;
+    collected.push(line);
+  }
+
+  return collected.join('\n').trim() || null;
 }
 
 // Parses `## Skill inputs` bullets (`- VAR: phrase`) into a { VAR: phrase } map.

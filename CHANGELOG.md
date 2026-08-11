@@ -83,6 +83,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `prompts/agent-orchestration/retrospect-session.md` (v1.1.0) — the
+  description now names the phrases that should trigger it and the neighbours
+  it is confused with, rather than describing only when it applies; a
+  description is what a model reads to decide whether to load the prompt at
+  all. It also prints the log entry as it appends it: that log is the one
+  thing the prompt writes without asking, so it was the one part the user
+  could not check
 - `tools/lib/check-outputs.js` accepts a schema sourced from a skill, not only
   from a prompt. A skill has no `## Prompt` block to check the schema against,
   so its schema names the section holding the authored format with
@@ -127,6 +134,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- `scripts/build-dist.js` — `extractSection` ended a section at the first
+  `## ` line even inside a fenced block, so a prompt whose section ends with a
+  template containing a heading compiled to a skill that stopped at the
+  opening fence. `retrospect-session` shipped this way: its log-entry template
+  begins `## <UTC date-time>`, and the compiled skill lost all seven lines of
+  it and carried an unterminated fence. Only headings in prose close a section
+  now
 - The freshness-check skill was referenced as living under
   `skills/repo-maintenance/` in five places across `AGENTS.md`,
   `guides/repo-maintenance/contributing-with-ai.md`, and

@@ -1,6 +1,6 @@
 ---
 title: Retrospect a session into durable rules
-description: Review a finished session for the corrections, re-explanations, and missing context that slowed it down, and convert them into a small set of candidate rules — each routed to the artifact that should carry it. Use at the end of a session that went badly, or after repeating the same correction across sessions.
+description: Review a finished session for the corrections, re-explanations, and missing context that slowed it down, and convert them into a small set of candidate rules — each routed to the artifact that should carry it. Use when the user says "retrospect this session", "what slowed us down", "we kept going in circles", "you keep making that mistake", "turn that into a rule", or "how do I stop this happening again"; when the user asks why a session took more correction than it should have; or when the user is about to hand-edit CLAUDE.md or AGENTS.md, so the edit follows evidence rather than the most recent annoyance. Also offer it proactively at the end of a session that needed the same correction more than once. This skill produces standing rules for future sessions — for blog material from a session, use extract-postable-insights instead. Not for sessions that went well.
 category: agent-orchestration
 tags: [retrospective, self-improvement, tuning, feedback, rules, learning]
 context_budget: low
@@ -9,6 +9,9 @@ versions:
     - version: 1.0.0
       date: 2026-08-07
       note: Initial version
+    - version: 1.1.0
+      date: 2026-08-11
+      note: Trigger-oriented description; print the log entry when appending it
 ---
 
 # Retrospect a session into durable rules
@@ -204,6 +207,10 @@ Then append an entry to that log — creating the directory with `mkdir -p` the
 first time — whether or not any rule was applied, and including sessions that
 ran clean. A run of clean retrospectives is itself signal, and a signal that
 was discarded once and returns is the evidence that promotes it later.
+
+Print the entry in your reply as you append it, and say which file it went to.
+The log is the only thing this prompt writes without asking, so it is the one
+part the user cannot check unless you show it.
 
 ```
 ## <UTC date-time> — <project-slug>
