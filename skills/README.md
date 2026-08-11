@@ -71,6 +71,6 @@ project-specific content when you copy a skill into a project:
 | File                         | Skill                          | What to fill in                                                       |
 | ---------------------------- | ------------------------------ | --------------------------------------------------------------------- |
 | `references/patterns.md`     | implement-feature, debug-issue | Project-specific code patterns, ORM usage, error handling conventions |
-| `references/conventions.md`  | implement-feature              | Naming, file structure, import style, git conventions                 |
+| `references/conventions.md`  | implement-feature              | Naming, file structure, import style, git conventions, deferred-work location |
 | `references/known-issues.md` | debug-issue                    | Known bugs, recurring failure modes, technical debt                   |
 | `references/domain.md`       | spec-writer                    | Domain language, entity names, business rules                         |

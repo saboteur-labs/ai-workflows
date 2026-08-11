@@ -94,3 +94,19 @@ PRs: one feature per PR; link to the relevant issue or spec in the description.
 -->
 
 _Not yet documented._
+
+---
+
+## Deferred work
+
+<!-- Where follow-up work deferred during implementation is recorded. Leave
+     this section as it is to accept the default:
+     `specs/features/{slug}/follow-up-work.md`, beside the feature's task list.
+
+Example:
+- Location: `docs/tech-debt/{slug}.md`, one file per feature
+- Appended to under the next `FU-{n}`; entries are never rewritten in place
+- Anything estimated at over a day goes to Linear instead, tagged `tech-debt`
+-->
+
+_Not yet documented — the default applies._

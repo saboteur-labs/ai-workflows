@@ -42,3 +42,5 @@ Rules:
 - Write at least one test per new function
 - Do not add unnecessary dependencies
 - Do not leave TODO comments — note deferred work in the summary
+- Also record deferred work in `specs/features/{slug}/follow-up-work.md`,
+  beside the feature's task list — the summary alone does not persist it

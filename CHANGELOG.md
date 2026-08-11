@@ -66,6 +66,19 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `skills/coding/implement-feature/` records deferred work to a file rather
+  than only to the session's implementation summary, which does not outlive
+  the session that wrote it. The location resolves from the project's
+  `references/conventions.md` first and otherwise defaults to
+  `specs/features/{slug}/follow-up-work.md`, beside the task list the work
+  came from; where neither resolves the skill asks, rather than inferring a
+  location from whichever folder looks relevant. The skill also reads that
+  file before starting, so an open item blocking the new work surfaces before
+  any code is written, and ticks the `Done` checkbox on the tasks it completes
+- `skills/coding/implement-feature/` writes tests before the code they cover
+  and checks for existing coverage first. The previous instruction to write
+  tests "alongside" the implementation left the ordering unstated, which is
+  the part that decides whether a test can fail for the right reason
 - `prompts/planning/write-feature-spec.md` and
   `prompts/planning/write-product-spec.md` now emit stable `FR-N`, `US-N`, and
   `OQ-N` identifiers, and require each requirement to reference the user story
