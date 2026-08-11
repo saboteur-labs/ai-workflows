@@ -7,5 +7,5 @@ content.
 | File                                                                 | Status  | Description                                            |
 | -------------------------------------------------------------------- | ------- | ------------------------------------------------------ |
 | [`how-this-repo-is-structured.md`](./how-this-repo-is-structured.md) | ✅ Done | Authoritative reference for what lives where and why   |
-| [`dependency-map.md`](./dependency-map.md)                           | ✅ Done | Which files must change together — enforces atomicity  |
+| [`dependency-map.md`](./dependency-map.md)                           | ✅ Done | Which files must change together — mirrors what `tools/lib/check_atomicity.sh` blocks on |
 | [`contributing-with-ai.md`](./contributing-with-ai.md)               | ✅ Done | How to use `skills/repo-maintenance/` and `skills/freshness-check/` to propose additions |

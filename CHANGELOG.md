@@ -83,6 +83,19 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `AGENTS.md` — a "Landing a change" section: do not base a PR on another open
+  PR, and confirm a merged PR's content actually reached the base branch before
+  deleting its branch. A stacked PR whose base merges into the default branch
+  first lands nowhere — green checks, approved review, content silently absent
+- `guides/repo-maintenance/dependency-map.md` now matches what
+  `check_atomicity.sh` blocks on, rather than what the couplings were intended
+  to be. `prompts/README.md` on any prompt change, `skills/README.md` on any
+  `SKILL.md` change, and a guide's parent `README.md` were all documented as
+  recommended or not at all while CI treated them as blocking, so the map sent
+  contributors into failing builds three times in one session. The examples row
+  named the wrong README. Also records a real gap: both skill couplings match
+  `skills/<category>/<name>/` only, so the five skills that sit a level higher
+  are enforced by nothing
 - `prompts/agent-orchestration/retrospect-session.md` (v1.1.0) — the
   description now names the phrases that should trigger it and the neighbours
   it is confused with, rather than describing only when it applies; a

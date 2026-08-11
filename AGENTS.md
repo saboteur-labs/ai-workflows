@@ -42,6 +42,26 @@ A PR that adds a prompt but does not update `prompts/README.md` and
 
 ---
 
+## Landing a change
+
+Do not base a PR on another open PR. A stacked PR lands only if its base
+lands first, and if the base is merged into the default branch before the
+stack is, the stacked work ends up on a branch nobody merges again — green
+checks, approved review, content silently absent. Fold the work into one PR,
+or wait for the base to land.
+
+When a PR merges, confirm its content reached the base branch before deleting
+its branch or moving on:
+
+```sh
+git merge-base --is-ancestor <sha> origin/development
+```
+
+A successful merge is not proof: it reports success even when it merged into
+somewhere other than where the work needed to go.
+
+---
+
 ## Guardrails you must follow
 
 **Against hallucination:**
