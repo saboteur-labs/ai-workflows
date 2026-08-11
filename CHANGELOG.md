@@ -90,6 +90,14 @@ bottom, and open a new empty `[Unreleased]` block above it.
   all. It also prints the log entry as it appends it: that log is the one
   thing the prompt writes without asking, so it was the one part the user
   could not check
+- `prompts/agent-orchestration/retrospect-session.md` — the recurrence check
+  reads every project's log rather than only the current project's. Writes
+  stay per-project. Most of what slows a session down is not repo-specific,
+  so a project-scoped check saw one cause fire in three repositories and
+  discarded it three times as three unrelated one-offs — the second firing is
+  what promotes a signal, and it was invisible across a repo boundary. Where a
+  signal appears now also carries information: confined to one log it wants
+  that project's instructions, spread across several it wants a broader home
 - `tools/lib/check-outputs.js` accepts a schema sourced from a skill, not only
   from a prompt. A skill has no `## Prompt` block to check the schema against,
   so its schema names the section holding the authored format with
