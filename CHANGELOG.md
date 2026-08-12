@@ -83,6 +83,12 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `skills/coding/implement-feature/` gives every open follow-up item a
+  disposition, not only the ones this implementation resolved. An item can also
+  lapse — the feature was cut, the approach changed, the code it described is
+  gone — and previously there was nothing to do with one, so it stayed open
+  forever. Everything left unticked is a claim that someone should still do it,
+  and a list that fails that claim stops being read
 - `prompts/agent-orchestration/retrospect-session.md` (v1.2.0) — the routing
   table gains two destinations it was missing, both found by failing to route a
   real rule. `enforcement: a hook or a check` goes first, because a rule with a

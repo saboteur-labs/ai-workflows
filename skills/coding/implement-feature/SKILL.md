@@ -147,9 +147,19 @@ already tried.
 **Resolved on:**
 ```
 
-Read the existing entries before appending. If this implementation resolved an
-open item, tick its `Resolved` box and fill `Resolved on` with today's date
-rather than letting it accumulate.
+Read the existing entries before appending, and give every open one a
+disposition:
+
+- Resolved by this implementation — tick `Resolved`, fill `Resolved on` with
+  today's date.
+- No longer relevant, though nobody did the work — the feature was cut, the
+  approach changed, the code it described is gone — tick `Resolved`, fill
+  `Resolved on`, and say in `Context` why it lapsed rather than what was done.
+- Still open — leave it untouched.
+
+An item that is neither actionable nor closed is the one thing this file
+cannot carry. Everything left unticked is a claim that someone should still
+do it, and a list that fails that claim stops being read.
 
 If the feature came with a task list, tick the `Done` checkbox for each task
 you completed. Leave it unticked for a task you only partly implemented, and
