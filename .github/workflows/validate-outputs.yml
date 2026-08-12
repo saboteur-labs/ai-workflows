@@ -5,6 +5,10 @@ on:
         paths:
             - "schemas/**"
             - "prompts/**/*.md"
+            # A schema may declare `skill:` instead of `prompt:`, which makes a
+            # SKILL.md the authored format the drift check reads. Without this
+            # line, editing that section cannot trigger the check that governs it.
+            - "skills/**/SKILL.md"
             - "tools/lib/check-outputs.js"
             - "tools/lib/check_outputs.sh"
 
