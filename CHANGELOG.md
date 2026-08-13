@@ -173,6 +173,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- `.github/workflows/validate-outputs.yml` did not run on `skills/**/SKILL.md`.
+  Once a schema could declare `skill:` instead of `prompt:`, a `SKILL.md`
+  became the authored format the drift check compares against — but the path
+  filter still listed only `schemas/`, `prompts/`, and the two check-outputs
+  tool files, so the one file that can break `sab.follow-up-work/1` could not
+  trigger the check that guards it. A validation that silently does not run is
+  worse than no validation, because the green tick is read as coverage
 - `scripts/build-dist.js` — `extractSection` ended a section at the first
   `## ` line even inside a fenced block, so a prompt whose section ends with a
   template containing a heading compiled to a skill that stopped at the
