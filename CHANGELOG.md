@@ -14,6 +14,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `CHANGELOG-repo-tools.md` — a second changelog for the skills that maintain
+  this repo, split out from the user-facing one. A reader who copied
+  `implement-feature` into their project does not need to know that
+  `repo-maintenance` was retuned. Routing is by a declared
+  `metadata.audience: repo` field rather than by directory, because the two do
+  not correlate: `improve-agent/` sits at the same depth as the repo tools but
+  tunes the user's own agents, so it stays in this file
 - `tools/lib/check-outputs.js` emits `execution_waves` and `file_conflicts` for
   task lists. `execution_order` is only one legal serialisation of the
   dependency graph and discards the fact that any parallelism was available;
@@ -173,6 +180,12 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- `tools/lib/check_atomicity.sh` enforced the `skills/README.md` coupling only
+  for skills nested under a category, so the five sitting directly under
+  `skills/` could drift out of the index with CI silent. The pattern now
+  matches at any depth. Leaving them out was a deliberate scope once — the
+  index tracked what consumers copy — but the answer is to route repo-internal
+  skills to their own changelog, not to leave them unchecked
 - `scripts/build-dist.js` — `extractSection` ended a section at the first
   `## ` line even inside a fenced block, so a prompt whose section ends with a
   template containing a heading compiled to a skill that stopped at the

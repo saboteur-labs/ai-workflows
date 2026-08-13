@@ -69,8 +69,8 @@ that adding one does.
 
 | File to update              | Required / Recommended | What to change                                                 |
 | --------------------------- | ---------------------- | -------------------------------------------------------------- |
-| `CHANGELOG.md`              | **Required**           | Add entry describing what changed                              |
-| `skills/README.md`          | **Required**           | Update the skill's row. Applies to skills nested under a category (`skills/<category>/<name>/`) — see the coverage gap below |
+| A changelog                 | **Required**           | `CHANGELOG-repo-tools.md` if the skill declares `audience: repo`, otherwise `CHANGELOG.md` — see "Which changelog a skill logs to" below |
+| `skills/README.md`          | **Required**           | Update the skill's row. Applies at any depth                   |
 | Sibling `-minimal/SKILL.md` | Recommended            | Check if the minimal variant needs updating to stay consistent |
 
 ### Deleting a skill directory
@@ -201,22 +201,38 @@ instruction. Required co-changes:
 
 ---
 
-## Known gap: skills outside a category directory
+## Which changelog a skill logs to
 
-The `skills/README.md` coupling and the `-minimal` sibling check both match
-`skills/<category>/<name>/SKILL.md`. Five skills sit one level higher and are
-matched by neither:
+A skill whose `SKILL.md` declares `audience: repo` under `metadata:` logs to
+`CHANGELOG-repo-tools.md`. Everything else logs to `CHANGELOG.md`. Both owe a
+row in `skills/README.md` either way.
 
 ```
-skills/repo-maintenance/          skills/improve-prompt/
-skills/repo-maintenance-minimal/  skills/improve-agent/
-skills/freshness-check/
+skills/repo-maintenance/          audience: repo  ->  CHANGELOG-repo-tools.md
+skills/repo-maintenance-minimal/  audience: repo  ->  CHANGELOG-repo-tools.md
+skills/freshness-check/           audience: repo  ->  CHANGELOG-repo-tools.md
+skills/improve-prompt/            audience: repo  ->  CHANGELOG-repo-tools.md
+everything else                                   ->  CHANGELOG.md
 ```
 
-Changing one of these will not be blocked for a missing `skills/README.md`
-row, and adding a `context-budget: medium` skill there will not be blocked for
-a missing minimal variant. The couplings still apply — nothing enforces them,
-so satisfy them by hand until the check covers both layouts.
+The split keeps the user-facing changelog a record of what changed for someone
+consuming this knowledge base. Tuning the machinery that maintains the repo is
+worth tracking, but it is not news to a reader who copied `implement-feature`
+into their project.
+
+Routing is by the declared field, never by path. `improve-agent/` sits at the
+same depth as the repo tools and is not one of them — it tunes the user's own
+agents, so it logs to `CHANGELOG.md`. A rule inferred from directory depth
+would misfile it.
+
+Adding a repo-tools skill means adding `audience: repo` to its frontmatter. Omit
+it and the skill logs to the user-facing changelog, which no check can catch —
+the field is the only signal of intent.
+
+The `-minimal` sibling check still matches `skills/<category>/<name>/` only, so
+a top-level skill with `context-budget: medium` is not blocked for a missing
+minimal variant. `repo-maintenance/` and `repo-maintenance-minimal/` satisfy
+that coupling by hand.
 
 ---
 
