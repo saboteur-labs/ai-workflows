@@ -13,6 +13,7 @@ metadata:
     version: "1.0"
     context-budget: low
     interfaces: ide, chat, cli, api
+    audience: repo
 ---
 
 # freshness-check

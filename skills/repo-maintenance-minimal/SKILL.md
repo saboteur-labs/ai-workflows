@@ -11,6 +11,7 @@ metadata:
     context-budget: low
     interfaces: ide, chat, cli, api
     full-skill: repo-maintenance
+    audience: repo
 ---
 
 # repo-maintenance-minimal

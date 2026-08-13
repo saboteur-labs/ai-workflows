@@ -151,7 +151,7 @@ CI check suite so failures are caught before they reach GitHub.
 | Check          | Blocks merge? | What it verifies                                                      |
 | -------------- | ------------- | --------------------------------------------------------------------- |
 | `frontmatter`  | Yes           | Required fields, valid `context_budget`, skill name matches directory |
-| `atomicity`    | Yes           | CHANGELOG + README index tables updated when content changes          |
+| `atomicity`    | Yes           | CHANGELOG + README index tables updated when content changes; a skill declaring `audience: repo` routes to `CHANGELOG-repo-tools.md` |
 | `links`        | Yes           | All internal markdown links resolve to real files                     |
 | `placeholders` | Yes           | No `{{PLACEHOLDERS}}` outside code fences, no stray stub markers      |
 | `outputs`      | Yes           | Each schema in `schemas/` agrees with the format authored in the prompt or skill it governs |

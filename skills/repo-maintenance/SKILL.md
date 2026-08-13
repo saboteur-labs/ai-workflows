@@ -17,6 +17,7 @@ metadata:
     version: "1.0"
     context-budget: medium
     interfaces: ide, chat, cli, api
+    audience: repo
 ---
 
 # repo-maintenance

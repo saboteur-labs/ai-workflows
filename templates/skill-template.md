@@ -69,7 +69,8 @@ compatibility: Requires git and Node.js >= 18
 
 # metadata: arbitrary key-value pairs.
 # Use this for anything not covered by the spec fields above.
-# Prefix custom keys to avoid conflicts (e.g. "org-key").
+# Every key this repo uses is listed below — nothing reads this block except
+# this repo's own tooling, so keys are bare rather than prefixed.
 metadata:
     author: saboteur-labs
     version: "1.0"
@@ -85,6 +86,21 @@ metadata:
     # CLI flags, or APIs that may change. Format: YYYY-MM-DD.
     # CI will warn when this date passes. Omit for evergreen skills.
     # review-by: YYYY-MM-DD
+    # audience: optional — set to "repo" for a skill that maintains THIS
+    # repository rather than shipping to consumers. It routes the skill's
+    # changelog entries to CHANGELOG-repo-tools.md instead of CHANGELOG.md,
+    # and check_atomicity.sh blocks a PR that updates the wrong one. Omit for
+    # any skill someone copies into their own project — including one that
+    # operates on the user's files, like improve-agent.
+    # audience: repo
+    # full-skill: optional — on a `-minimal` variant, names the full skill it
+    # is derived from, so the pair can be found from either side.
+    # full-skill: implement-feature
+    # output-schema: optional — the schema id in schemas/ that governs a
+    # document this skill produces. The schema must name this file back with
+    # `skill:`, and `format-section:` must point at the section holding the
+    # authored format; tools/validate.sh --check outputs asserts the two agree.
+    # output-schema: sab.follow-up-work/1
 
 
 # verified-against: optional — records sources for external claims.

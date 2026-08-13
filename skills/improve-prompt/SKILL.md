@@ -19,6 +19,7 @@ metadata:
     version: "1.0"
     context-budget: medium
     interfaces: cli, ide
+    audience: repo
 ---
 
 # improve-prompt

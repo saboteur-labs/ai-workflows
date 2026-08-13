@@ -53,6 +53,12 @@ Skills for working on the user's own subagents.
 Skills for maintaining this repo itself. These are not copied into other
 projects — they are used in-place when working on this knowledge base.
 
+They declare `audience: repo` under `metadata:`, which routes their changelog
+entries to [`../CHANGELOG-repo-tools.md`](../CHANGELOG-repo-tools.md) instead
+of the user-facing `CHANGELOG.md`. Note that `improve-agent/` above is *not*
+one of these: it sits at the same directory depth but tunes the user's own
+agents, so it logs to `CHANGELOG.md` like any other shipped skill.
+
 | Skill                                                      | Budget | Description                                                                     |
 | ---------------------------------------------------------- | ------ | ------------------------------------------------------------------------------- |
 | [`repo-maintenance/`](./repo-maintenance/)                 | medium | Maintain and extend this repo — propose changes, check atomicity, enforce style |
