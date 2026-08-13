@@ -180,6 +180,13 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- `templates/skill-template.md` documents the three `metadata` keys already in
+  use that it never listed — `audience`, `full-skill`, and `output-schema`. The
+  template is the frontmatter spec for skills, so a key it omits is one the
+  next author can only find by reading a checker or copying an existing file.
+  Its "prefix custom keys" guidance is also gone: five of the eight keys in use
+  ignored it, nothing outside this repo's own tooling reads the block, and a
+  rule followed by nobody is worse than no rule
 - `tools/lib/check_atomicity.sh` enforced the `skills/README.md` coupling only
   for skills nested under a category, so the five sitting directly under
   `skills/` could drift out of the index with CI silent. The pattern now
