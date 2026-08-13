@@ -90,6 +90,18 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Changed
 
+- `prompts/agent-orchestration/retrospect-session.md` (v1.3.0) — the log
+  records one line per rule with a state (`proposed` / `approved` / `landed` /
+  `dropped`), the destination, and a ref, replacing the prose `**Promoted:**`
+  and `**Applied:**` fields. `**Applied:**` was written at session end but
+  described work that finishes later — a PR merges tomorrow — so it was stale
+  by construction and needed correcting by hand twice in one session. State
+  first, so `grep '^- approved' */log.md` across every project lists the rules
+  someone agreed to and nobody confirmed landed. That case is the dangerous
+  one: a rule recorded as done that never merged suppresses its own
+  re-promotion, because the next retrospective counts the signal as handled.
+  Entries stay append-only except `state` and `ref`, which are reconciled
+  against reality whenever the logs are read
 - `skills/coding/implement-feature/` gives every open follow-up item a
   disposition, not only the ones this implementation resolved. An item can also
   lapse — the feature was cut, the approach changed, the code it described is

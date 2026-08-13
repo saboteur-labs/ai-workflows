@@ -15,6 +15,9 @@ versions:
     - version: 1.2.0
       date: 2026-08-11
       note: Routing table gains enforcement and user-level destinations
+    - version: 1.3.0
+      date: 2026-08-12
+      note: Log records per-rule state and ref; state is reconciled on read
 ---
 
 # Retrospect a session into durable rules
@@ -196,6 +199,11 @@ would, write one checkable rule and name which file should carry it:
   three unrelated one-offs. Reading globally also tells you where the rule
   belongs: a signal confined to one project's log wants that project's
   instructions, and one appearing across several wants a broader home.
+- The `state` field is what makes the log answer "did that actually happen".
+  Prose cannot: `**Applied:**` was written at session end but described work
+  that finished later, so it was stale by construction and had to be corrected
+  by hand twice in one session. A field with four values and a ref can be
+  reconciled mechanically instead.
 - The Step 3 discard list is the part people skip and then regret. Without
   it the same one-off gets re-litigated in every retrospective — and a
   discarded signal that shows up again is exactly the evidence that should
@@ -243,7 +251,15 @@ project's log is direct evidence, while one in another project's log is
 evidence that the cause is not local to this repository, and therefore that
 the rule probably belongs somewhere broader than this repo's instructions.
 
-Reads are global; writes stay local. Append only to the current project's log.
+Reads are global; writes stay local. Append only to the current project's log —
+the one exception being the state reconciliation described with the entry
+format below, which may touch any project's entries.
+
+While reading, treat a rule's recorded state as evidence about the signal
+behind it. A rule marked `landed` means that signal was addressed, so its
+recurrence is worth more, not less: something got past a rule written to stop
+it. A rule marked `approved` for weeks, or `proposed` and never taken up, is a
+signal that was never actually acted on — do not count it as handled.
 
 Present the candidate rules and ask which to apply. Apply only the ones the
 user approves, one destination file at a time, showing the edit before making
@@ -263,7 +279,37 @@ part the user cannot check unless you show it.
 ## <UTC date-time> — <project-slug>
 **Session:** <one line on what the session set out to do>
 **Signals:** <count, then one line each>
-**Promoted:** <rule → destination, per rule, or "none">
+**Rules:** <one line per promoted rule, or "none">
+- <state> | <destination> | <ref> | <the rule, one line>
 **Discarded:** <one line each, with the reason>
-**Applied:** <which rules the user approved and where, or "none">
 ```
+
+One line per rule, four fields, pipe-separated:
+
+| Field | Values |
+| --- | --- |
+| state | `proposed` — written up, not approved |
+| | `approved` — approved and the edit made, not yet in effect |
+| | `landed` — in effect: merged, or installed and running |
+| | `dropped` — approved once, then abandoned |
+| destination | the artifact, the hook event, or `unresolved` |
+| ref | commit sha, PR number, or installed path. `—` until there is one |
+| rule | the imperative sentence, one line |
+
+State first so the log can be queried. `grep '^- approved' */log.md` across
+every project is the list of rules someone agreed to and nobody confirmed
+landed — the failure this format exists to make visible. A rule recorded as
+done that never merged is worse than one never written: it suppresses its own
+re-promotion, because the next retrospective sees it in a prior entry and
+counts the signal as already handled.
+
+`landed` means in effect, not written. An instruction file that has not merged
+governs nothing, and a hook that is not installed enforces nothing.
+
+**Entries are append-only, with one exception: `state` and `ref` may be
+updated in place on any past entry.** Everything else — the session line, the
+signals, the discards, the rule text — is a record of what was true when it
+was written and must not be edited. When you read the logs at the start of a
+run, reconcile every rule still marked `approved`: check whether it landed,
+and if it did, set it to `landed` and fill in the ref. That reconciliation is
+the only reason to touch an older entry.
