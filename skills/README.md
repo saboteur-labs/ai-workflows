@@ -50,9 +50,11 @@ Skills for working on the user's own subagents.
 
 ## pipeline
 
-Skills for the `saboteur-ship` pipeline itself. These are installed into
-`~/.claude/skills/` alongside `saboteur-ship` and the pipeline subagents, not
-copied into a project's `.agents/skills/`:
+Skills for the `saboteur-ship` pipeline itself. The pipeline machinery — the
+lead skill, its subagents, and the plan-gate hook — lives in
+[`../pipeline/`](../pipeline/); what sits here is invoked on demand rather than
+being part of a run. Both install into `~/.claude/` rather than into a project's
+`.agents/skills/`:
 
 ```sh
 ln -s "$PWD/skills/saboteur-onboard-pipeline" ~/.claude/skills/saboteur-onboard-pipeline

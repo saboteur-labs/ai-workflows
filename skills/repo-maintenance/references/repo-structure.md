@@ -20,6 +20,7 @@ ai-workflows/
 ├── templates/             ← Authoring templates
 ├── examples/              ← Worked end-to-end workflow demos
 ├── tools/                 ← Shell scripts and utilities
+├── pipeline/              ← saboteur-ship machinery (Claude Code-specific)
 └── .github/               ← CI workflows and GitHub templates
 ```
 

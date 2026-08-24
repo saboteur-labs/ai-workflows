@@ -11,6 +11,7 @@
 #   ./tools/validate.sh --check links
 #   ./tools/validate.sh --check placeholders
 #   ./tools/validate.sh --check outputs
+#   ./tools/validate.sh --check ladder
 #   ./tools/validate.sh --check freshness
 #   ./tools/validate.sh --fix              Auto-fix what can be fixed (links index only)
 #   ./tools/validate.sh --changed-only     Only check files changed since last commit
@@ -26,6 +27,7 @@
 #   links        → validate-links.yml           (blocks merge)
 #   placeholders → validate-placeholders.yml    (blocks merge)
 #   outputs      → validate-outputs.yml         (blocks merge)
+#   ladder       → no CI workflow yet            (local only)
 #   freshness    → validate-freshness.yml       (warns only)
 
 set -euo pipefail
@@ -71,7 +73,7 @@ done
 
 # Default: run all checks
 if [[ ${#CHECKS[@]} -eq 0 ]]; then
-  CHECKS=(frontmatter atomicity links placeholders outputs freshness)
+  CHECKS=(frontmatter atomicity links placeholders outputs ladder freshness)
 fi
 
 cd "$REPO_ROOT"

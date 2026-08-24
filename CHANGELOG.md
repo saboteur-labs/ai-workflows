@@ -14,6 +14,23 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `pipeline/` — the `saboteur-ship` machinery, moved in from `~/.claude` where
+  it was unversioned: the lead skill, five subagent definitions, and the
+  plan-gate hook. 680 lines of load-bearing orchestration with no history, no
+  backup, and no review trail. Installed by symlink, so the working copy tracks
+  this repo. The deciding argument was drift rather than backup: the ladder rung
+  table is restated in more than one document by necessity — an agent mid-run
+  cannot follow a link to find out where to write a file — and nothing could
+  check the copies agreed while half of them lived outside the repo
+- `tools/lib/check_ladder.sh` — asserts every in-repo copy of the ladder agrees
+  with `pipeline/skills/saboteur-ship/SKILL.md` cell for cell, and that every
+  schema it names is one `check-outputs.js` knows. Column padding is normalised,
+  so only cell contents are compared. This is not a documentation nit:
+  `pipeline-gate.sh` exempts `specs/` from the plan gate and denies everything
+  else, so a rung whose path drifts in one document and not another surfaces as
+  a denied write halfway through a run, and a subagent that hits that denial
+  loses its entire run rather than retrying. Wired into `tools/validate.sh`;
+  no CI workflow yet, since adding one needs human approval per `AGENTS.md`
 - `skills/saboteur-onboard-pipeline/` — onboards a repository that predates the
   `saboteur-ship` pipeline. A pre-pipeline repo has no ladder artifacts, and a
   run currently discovers that one gap at a time: a missing product spec at

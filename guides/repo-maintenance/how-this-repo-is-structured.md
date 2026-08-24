@@ -90,6 +90,18 @@ lives in `tools/lib/` (Python and Node stubs). Tools are designed to
 compose: `fetch-prompt.sh` + `chunk-file.sh` + a model CLI = a complete
 processing pipeline.
 
+### `pipeline/`
+
+The `saboteur-ship` machinery: the skill that leads a run, the subagents it
+delegates to, and the plan-gate hook. The one deliberate exception to the
+model- and interface-agnostic rule — these files are Claude Code-specific, and
+scoped that way in the same sense `dist/claude/` is.
+
+They are machinery rather than reference content: installed by symlink into
+`~/.claude/` and invoked, not copied into a project. That makes every edit a
+deploy — there is no build step and no review between changing a file here and
+the next run using it. See [`../../pipeline/README.md`](../../pipeline/README.md).
+
 ### `.github/`
 
 CI workflows and GitHub templates. Workflows are the automated enforcement

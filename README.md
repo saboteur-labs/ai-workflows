@@ -23,6 +23,7 @@ you're working on. There are no dependencies to install and nothing to link.
 - Looking for guidance on workflows, context management, or model selection? → [`guides/`](./guides/)
 - Want a worked end-to-end example? → [`examples/`](./examples/)
 - Need a script to chunk files or fetch content from this repo? → [`tools/`](./tools/)
+- Running the `saboteur-ship` pipeline, or changing how it works? → [`pipeline/`](./pipeline/)
 
 **Copying a prompt:**
 
