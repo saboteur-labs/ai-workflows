@@ -14,6 +14,15 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `skills/saboteur-onboard-pipeline/` — onboards a repository that predates the
+  `saboteur-ship` pipeline. A pre-pipeline repo has no ladder artifacts, and a
+  run currently discovers that one gap at a time: a missing product spec at
+  Stage 1, a spec that fails `sab.product-spec/1` at its gate, a `docs/`-based
+  spec layout that surfaces as a denied write because the plan-gate hook only
+  exempts `specs/` and `.claude/`. The skill finds all of it in one read-only
+  pass and repairs only what is approved at a gate. It backfills rungs 1–3 and
+  not 4–5: a feature spec for code that already shipped documents history, not
+  the next run
 - `CHANGELOG-repo-tools.md` — a second changelog for the skills that maintain
   this repo, split out from the user-facing one. A reader who copied
   `implement-feature` into their project does not need to know that
