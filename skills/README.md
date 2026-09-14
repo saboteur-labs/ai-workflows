@@ -75,6 +75,17 @@ one skill does not justify the flag.
 | ---------------------------------------------------- | ------ | --------------------------------------------------------------------------- |
 | [`saboteur-onboard-pipeline/`](./saboteur-onboard-pipeline/) | medium | Bring a repo that predates the pipeline up to the ladder state a run expects |
 
+## observability
+
+Skills for seeing what agents actually did. These are Claude Code-specific:
+they read logs written by Claude Code hooks, so they install into `~/.claude/`
+by symlink rather than into a project's `.agents/skills/`. Installation,
+including the hook registration, is in each skill's `references/install.md`.
+
+| Skill                  | Budget | Description                                                                              |
+| ---------------------- | ------ | ---------------------------------------------------------------------------------------- |
+| [`runlog/`](./runlog/) | low    | Read the per-repo, per-session log of what agents attempted, written by Claude Code hooks |
+
 ## repo tools
 
 Skills for maintaining this repo itself. These are not copied into other

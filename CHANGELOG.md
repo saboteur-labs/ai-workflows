@@ -14,6 +14,23 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `skills/runlog/` — a hook-backed record of what Claude Code agents attempted,
+  one JSONL file per session under `~/.claude/runlogs/repos/<repo-key>/`. A
+  session is filed under the repo it started in, and every worktree of a repo
+  shares one key. Version 0 records facts only — prompts, tool calls, results,
+  failures, subagent starts and stops, turn ends — and deliberately interprets
+  nothing: deciding which events mean an agent changed direction or had its
+  work caught needs real logs to check against first
+    - `scripts/runlog-record.sh` — the hook. Always exits 0 and is registered
+      async, so it cannot block or slow a tool call. Appends take a `flock`:
+      measured with 200 concurrent ~12 KB appends, a plain `>>` left line 23
+      corrupt, and the locked version kept all 200 lines intact across three
+      runs
+    - `scripts/runlog-show.sh` — lists a repo's sessions and prints one as a
+      timeline. A tool call with no recorded result is shown as exactly that,
+      not as denied or interrupted, because the log cannot tell which
+    - `references/install.md` — symlink, `settings.json` registration, and
+      measured cost
 - `pipeline/` — the `saboteur-ship` machinery, moved in from `~/.claude` where
   it was unversioned: the lead skill, five subagent definitions, and the
   plan-gate hook. 680 lines of load-bearing orchestration with no history, no
