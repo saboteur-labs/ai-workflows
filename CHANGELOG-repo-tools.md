@@ -24,6 +24,12 @@ split rather than being backfilled.
 
 ## [Unreleased]
 
+### Changed
+
+- `repo-maintenance/references/repo-structure.md` lists the new `pipeline/`
+  directory. A maintenance agent navigating from this tree would otherwise treat
+  the `saboteur-ship` machinery as untracked clutter at the repo root
+
 ### Added
 
 - `metadata.audience` on `repo-maintenance/`, `repo-maintenance-minimal/`,

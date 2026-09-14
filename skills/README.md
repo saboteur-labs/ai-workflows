@@ -48,6 +48,33 @@ Skills for working on the user's own subagents.
 | -------------------------------------- | ------ | --------------------------------------------------------------------------------- |
 | [`improve-agent/`](./improve-agent/)   | medium | Continuously improve a user-created agent by learning from how it actually runs   |
 
+## pipeline
+
+Skills for the `saboteur-ship` pipeline itself. The pipeline machinery — the
+lead skill, its subagents, and the plan-gate hook — lives in
+[`../pipeline/`](../pipeline/); what sits here is invoked on demand rather than
+being part of a run. Both install into `~/.claude/` rather than into a project's
+`.agents/skills/`:
+
+```sh
+ln -s "$PWD/skills/saboteur-onboard-pipeline" ~/.claude/skills/saboteur-onboard-pipeline
+```
+
+Symlink rather than copy, for the reason given in
+[`../prompts/README.md`](../prompts/README.md) — the installed skill then
+tracks this repo. These are source skills, not compiled ones, so no
+`build-dist.js` run is needed after pulling. The trade is that the installed
+skill follows whichever branch this repo is checked out on.
+
+`tools/fetch-prompt.sh --install-skill` deliberately does not cover these: it
+copies into a project's `.agents/skills/`, which is the wrong destination and
+the wrong mechanism. Revisit tool support when a second pipeline skill lands —
+one skill does not justify the flag.
+
+| Skill                                                | Budget | Description                                                                 |
+| ---------------------------------------------------- | ------ | --------------------------------------------------------------------------- |
+| [`saboteur-onboard-pipeline/`](./saboteur-onboard-pipeline/) | medium | Bring a repo that predates the pipeline up to the ladder state a run expects |
+
 ## repo tools
 
 Skills for maintaining this repo itself. These are not copied into other

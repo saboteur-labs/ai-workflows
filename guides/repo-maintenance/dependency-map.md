@@ -154,6 +154,51 @@ agents without instruction.
 
 ---
 
+## Pipeline changes
+
+`pipeline/` holds the `saboteur-ship` machinery. These files are installed by
+symlink into `~/.claude/`, so a change here is live on the next run with no
+build step and no review — treat every edit as a deploy.
+
+### Modifying any file in `pipeline/`
+
+| File to update | Required / Recommended | What to change                              |
+| -------------- | ---------------------- | ------------------------------------------- |
+| `CHANGELOG.md` | **Required**           | Add entry naming the file and what changed  |
+
+### Changing the ladder
+
+The rung table in `pipeline/skills/saboteur-ship/SKILL.md` is the source of
+truth. Every other in-repo copy must be updated in the same change.
+`tools/lib/check_ladder.sh` blocks on disagreement, so this is enforced rather
+than remembered.
+
+| File to update                                    | Required / Recommended | What to change                            |
+| ------------------------------------------------- | ---------------------- | ----------------------------------------- |
+| `skills/saboteur-onboard-pipeline/SKILL.md`       | **Required**           | The ladder table, cell for cell           |
+| Any file added later with a `## The ladder` table | **Required**           | Same — the check discovers carriers by heading |
+| `CHANGELOG.md`                                    | **Required**           | Add entry                                 |
+| `~/.claude/testbeds/ship-testbed.md`              | By hand                | Outside this repo; no check can reach it  |
+
+Changing a rung's **path** additionally means checking
+`pipeline/hooks/pipeline-gate.sh`: it exempts `specs/` from the plan gate and
+denies everything else, so a rung that moves outside `specs/` becomes a denied
+write mid-run unless the hook moves with it.
+
+### Renaming a pipeline agent
+
+Agent definitions are contracts. `saboteur-ship` delegates by name and expects a
+particular report shape back, and nothing validates that pairing.
+
+| File to update                             | Required / Recommended | What to change                          |
+| ------------------------------------------ | ---------------------- | --------------------------------------- |
+| `pipeline/skills/saboteur-ship/SKILL.md`   | **Required**           | Every delegation naming the old agent   |
+| `skills/saboteur-onboard-pipeline/SKILL.md` | **Required**          | Its repair-routing step names the agents |
+| `pipeline/README.md`                       | **Required**           | The "What is here" table                |
+| `CHANGELOG.md`                             | **Required**           | Add entry                               |
+
+---
+
 ## Tool changes
 
 ### Modifying or adding a tool in `tools/`

@@ -137,6 +137,7 @@ CI check suite so failures are caught before they reach GitHub.
 ./tools/validate.sh --check atomicity
 ./tools/validate.sh --check placeholders
 ./tools/validate.sh --check outputs
+./tools/validate.sh --check ladder
 ./tools/validate.sh --check freshness
 
 # Only check files changed since last commit (fastest for pre-push)
@@ -183,6 +184,7 @@ need to call these directly.
 | `lib/check_placeholders.sh` | Shell    | Detects unfilled `{{PLACEHOLDERS}}` and stray stub markers      |
 | `lib/check_freshness.sh`    | Shell    | Warns on expired or soon-expiring `review-by` dates             |
 | `lib/check_outputs.sh`      | Shell    | Wrapper around the schema engine for `validate.sh` and CI       |
+| `lib/check_ladder.sh`       | Shell    | Asserts every in-repo copy of the saboteur-ship ladder agrees   |
 | `lib/check-outputs.js`      | Node.js  | Schema engine: drift check, document validation, derived JSON   |
 | `lib/chunk_file.py`         | Python   | Token-accurate chunking using tiktoken (stub)                   |
 | `lib/fetch_prompt.js`       | Node.js  | Frontmatter parsing and remote fetch (stub)                     |
