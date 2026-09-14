@@ -6,7 +6,8 @@ delegates each stage to, and the hook that enforces the plan gate.
 Unlike the rest of this repo, these files are **Claude Code-specific** and are
 not model- or interface-agnostic. They are machinery, not reference content —
 you install them once and invoke them, rather than copying them into a project.
-The scoping is the same as [`../dist/claude/`](../dist/): a subtree that targets
+The scoping is the same as `dist/claude/` (built by
+[`../scripts/build-dist.js`](../scripts/build-dist.js)): a subtree that targets
 one interface, inside a repo whose content is otherwise portable.
 
 ---
