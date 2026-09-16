@@ -1,2 +1,18 @@
 dist/
 .DS_Store
+
+# Local Claude Code config, deliberately untracked.
+#
+# .claude/skills/ may hold symlinks to this repo's own skills (repo-maintenance,
+# freshness-check), which makes Claude Code auto-load them for a session started
+# here — convenient, and the reason the directory exists at all. Tracking just
+# those symlinks was considered on 2026-09-16 and deferred: they sit beside
+# files that are machine-local by nature (settings.local.json, .cc-writes/) and
+# the marker files a saboteur-ship run writes (.pipeline-active, .plan-approved),
+# so ignoring the directory is the simpler rule. The cost is that each clone
+# sets the symlinks up by hand:
+#
+#   mkdir -p .claude/skills
+#   ln -s ../../skills/repo-maintenance .claude/skills/repo-maintenance
+#   ln -s ../../skills/freshness-check  .claude/skills/freshness-check
+.claude/

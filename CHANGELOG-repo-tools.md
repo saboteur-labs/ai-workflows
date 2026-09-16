@@ -26,6 +26,14 @@ split rather than being backfilled.
 
 ### Changed
 
+- `.gitignore` ignores `.claude/`, the local Claude Code config directory. It
+  can hold symlinks to `repo-maintenance` and `freshness-check` that make Claude
+  Code auto-load them for a session started in this repo, which would make
+  `AGENTS.md`'s "load repo-maintenance first" rule enforce itself. Committing
+  just those symlinks was deferred: they share the directory with machine-local
+  settings and with a pipeline run's marker files, so the whole directory stays
+  untracked and each clone links them by hand. The commands are in `.gitignore`
+  next to the rule
 - `repo-maintenance/references/repo-structure.md` lists the new `pipeline/`
   directory. A maintenance agent navigating from this tree would otherwise treat
   the `saboteur-ship` machinery as untracked clutter at the repo root
