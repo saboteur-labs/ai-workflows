@@ -44,6 +44,7 @@ ln -s "$PWD/pipeline/agents/specs-tasks/saboteur-spec-manager.md" ~/.claude/agen
 ln -s "$PWD/pipeline/agents/specs-tasks/saboteur-oq-triage.md" ~/.claude/agents/specs-tasks/saboteur-oq-triage.md
 ln -s "$PWD/pipeline/agents/maintenance-upkeep/saboteur-scribe.md" ~/.claude/agents/maintenance-upkeep/saboteur-scribe.md
 ln -s "$PWD/pipeline/hooks/pipeline-gate.sh"               ~/.claude/hooks/pipeline-gate.sh
+ln -s "$PWD/skills/documentation/write-user-guide"         ~/.claude/skills/write-user-guide
 ```
 
 Agents are linked file by file rather than by directory. `specs-tasks/` and

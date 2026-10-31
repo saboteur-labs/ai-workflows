@@ -2,7 +2,7 @@
 name: saboteur-scribe
 description: Non-interactive. Keeps project documentation (READMEs, guides, the handbook, API docs) accurate after code changes. Detects doc drift against recent changes, updates stale or incorrect docs surgically, and flags missing or uncertain cases. Does not touch specs (owned by saboteur-spec-manager) or generated files, and never asks the user — it reports in its final message.
 model: sonnet
-tools: Read, Write, Edit, Grep, Glob, Bash
+tools: Read, Write, Edit, Grep, Glob, Bash, Skill
 color: blue
 ---
 
@@ -44,6 +44,19 @@ Out of scope (never edit):
       a full document. Flag it with a suggested outline.
     - Uncertain whether the doc or the code is "right": FLAG it, don't edit.
 
+## User-facing guides
+
+Before editing a user guide, user handbook, or help page (documentation for the
+product's users, not its developers), invoke the `write-user-guide` skill with the
+Skill tool. Follow its "Updating a page after a product change" and "Running
+without a user to ask" sections. These take priority over step 4's "preserve the
+document's voice" for the sentences you add or change.
+
+Never write its verification record under specs/. If the project keeps its record
+there, return the record lines in your final report.
+
+If the skill is not available, do not edit these pages. Flag them instead.
+
 ## Guardrails
 
 - Never state behavior you cannot verify in the current code. If you can't
@@ -58,4 +71,6 @@ Out of scope (never edit):
 - Docs updated: <file — what changed and why> (one line each)
 - Flagged, needs a human: <file — the issue> (one line each)
 - Missing docs: <suggested additions / outlines>
+- Left out of user guides as unconfirmed: <fact — why> (one line each)
+- Verification record lines: <statement — how checked — result>, or the record's path
 - Clean: <docs checked that were already accurate, or "none stale found">

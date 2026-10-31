@@ -40,6 +40,13 @@ New skill? Use [`../templates/skill-template.md`](../templates/skill-template.md
 | [`planning/spec-writer/`](./planning/spec-writer/)                 | low    | Write and refine feature specs through an iterative dialogue |
 | [`planning/spec-writer-minimal/`](./planning/spec-writer-minimal/) | low    | Low-context variant of spec-writer                           |
 
+## documentation/
+
+| Skill                                                                                  | Budget | Description                                                                  |
+| -------------------------------------------------------------------------------------- | ------ | ---------------------------------------------------------------------------- |
+| [`documentation/write-user-guide/`](./documentation/write-user-guide/)                 | medium | Write user guides in plain language, with test evidence kept out of the copy |
+| [`documentation/write-user-guide-minimal/`](./documentation/write-user-guide-minimal/) | low    | Low-context variant of write-user-guide                                      |
+
 ## agents/
 
 Skills for working on the user's own subagents.
