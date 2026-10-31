@@ -14,6 +14,20 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Added
 
+- `skills/documentation/write-user-guide/` — write or rewrite user guides in
+  plain language for the software's actual users. Every statement is checked
+  against the product, and the evidence goes in a separate record rather than
+  in the copy
+    - `references/copy-examples.md` — before-and-after examples from a real
+      handbook
+    - `assets/page-template.md` — goal-based page structure
+    - `scripts/check-copy.sh` — flags test-report wording, build references, and
+      likely jargon. It checks wording only
+- `skills/documentation/write-user-guide-minimal/` — low-context variant of
+  write-user-guide
+- `pipeline/agents/maintenance-upkeep/saboteur-scribe.md` — updated: uses
+  `write-user-guide` when editing user-facing guides, and flags those pages
+  instead of editing them if the skill is not installed
 - `skills/runlog/` — a hook-backed record of what Claude Code agents attempted,
   one JSONL file per session under `~/.claude/runlogs/repos/<repo-key>/`. A
   session is filed under the repo it started in, and every worktree of a repo
