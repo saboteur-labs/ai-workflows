@@ -12,6 +12,30 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ## [Unreleased]
 
+### Changed
+
+- `pipeline/agents/saboteur-feature-orchestrator.md` — runs stretches of
+  single-lane waves (up to 4 tasks) as one serial run in one implementor,
+  instead of one spawn, integration and suite run per task. Never sleeps or
+  polls to wait for agents; reports remaining worktrees, with whether each
+  landed, for the lead to remove instead of removing them. Lane cap raised from
+  3 to 4. Sized from runlog measurements across 103 orchestrator runs
+- `pipeline/agents/saboteur-task-implementor.md` — in a serial run, commits each
+  task in its own worktree and stops at the first task it cannot get green
+- `pipeline/skills/saboteur-ship/SKILL.md` — Gate 4 shows the critical path,
+  serial runs, directory entries and tasks without paths; cleanup removes the
+  orchestrator's reported worktrees once each is confirmed landed
+- `tools/lib/check-outputs.js` — a directory entry in `Files` now overlaps every
+  file beneath it, where before only identical strings conflicted, so a task
+  declaring `src/` no longer runs beside one declaring `src/main.ts`. Derives
+  `critical_path`, `serial_runs`, `directory_entries` and `tasks_without_paths`
+  for `sab.tasks/1`; exit codes are unchanged
+- `prompts/planning/break-into-tasks.md` (1.1.0) — requires concrete file
+  paths and per-task result files instead of a shared log, and asks for short
+  dependency chains
+- `guides/repo-maintenance/dependency-map.md` — couples the derived task fields
+  to the orchestrator and the ship lead
+
 ### Added
 
 - `skills/documentation/write-user-guide/` — write or rewrite user guides in

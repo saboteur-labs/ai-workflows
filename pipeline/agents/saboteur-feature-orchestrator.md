@@ -28,7 +28,8 @@ node ~/Repositories/saboteur-labs/ai-workflows/tools/lib/check-outputs.js \
 ```
 
 - Exit 0 -> the JSON gives you `tasks` (each with `id`, `done_when`,
-  `depends_on`, `files`, `done`), `execution_waves`, and `file_conflicts`.
+  `depends_on`, `files`, `done`), `execution_waves`, `file_conflicts`, and
+  `serial_runs`.
   This is derived from the document on demand, so it cannot disagree with the
   task list you were handed.
 - Non-zero exit -> the task list is not safe to execute: a missing done
@@ -55,10 +56,14 @@ Within a wave, build **lanes**:
    concurrently — they are dependency-independent but not file-independent,
    and you have no tool that can resolve the resulting conflict.
 3. Lanes run concurrently; tasks inside a lane run sequentially in ascending id.
-4. Cap concurrency at **3 lanes** at a time. If a wave has more, run the first
-   three and start the next lane as each finishes.
+4. Cap concurrency at **4 lanes** at a time. If a wave has more, run the first
+   four and start the next lane as each finishes.
 
 A wave of one lane is just the sequential case, which is normal and common.
+
+**Serial runs.** If the next wave begins an entry in `serial_runs`, run that
+whole entry as one unit — see "Executing a serial run" — instead of wave by
+wave. Every wave in it is a single lane, so nothing could have run beside it.
 
 ## Executing a wave
 
@@ -68,18 +73,25 @@ For each lane, in parallel up to the cap:
    task, the relevant slice of the spec, any acceptance criteria, and an
    instruction to report back its test/build status.
 2. Invoke saboteur-task-implementor with `isolation: worktree` so concurrent
-   lanes cannot corrupt each other's working tree. Wait for it to return.
+   lanes cannot corrupt each other's working tree. Once every lane you can
+   start is dispatched, end your turn: you are resumed when an implementor
+   finishes. **Never wait by sleeping, by polling output files, or by looping
+   on `git worktree list`** — in past runs those loops held the whole pipeline
+   idle for 20–80 minutes with nothing implementing.
    The harness chooses where the worktree lives, and it may place it INSIDE
    the repository (e.g. `.claude/worktrees/`). You cannot control that, so
    defend against it instead: never `git add -A` — stage only the task's
    declared files, or an in-repo worktree is committed into the feature branch
    as an embedded repository.
-   Before reporting the feature done, verify the cleanup rather than assuming
-   it: `git worktree list` must show no agent worktrees, and no worktree
-   content may remain on disk. A worktree still registered at close-out
-   strands its commits outside the checked-out branch, where they read as
-   finished work that never landed. If any remain, remove them and say so in
-   your report.
+   Do not remove agent worktrees and do not wait for their locks to clear —
+   removal fails inside the sandbox, and the lead removes them at cleanup.
+   What you must verify is that no work is stranded: a worktree whose commits
+   never reached the feature branch reads as finished work that never landed.
+   Before reporting, for every agent worktree `git worktree list` still shows,
+   check whether its HEAD is reachable from the feature branch
+   (`git merge-base --is-ancestor <sha> <feature-branch>`) and list it under
+   "Worktrees to remove" with that result. Name any unreachable one as
+   unlanded work.
 3. Judge the result against the task's `done_when` from the parsed task list —
    that condition is the contract, not the implementor's own account of success.
    A green suite is NOT evidence that `done_when` holds: the implementor wrote
@@ -94,7 +106,7 @@ For each lane, in parallel up to the cap:
       reproducible on another machine or in CI.
     - Success + green tests/build + `done_when` demonstrably satisfied -> stage
       **only the paths the task declared in `Files`**, then commit **inside that
-      worktree** (implementors never commit; you do). Never `git add -A`: a task
+      worktree** (outside a serial run, implementors never commit; you do). Never `git add -A`: a task
       that ran a package manager leaves `node_modules/` and lockfiles untracked
       beside its real output, and a blanket add sweeps them into the branch.
 
@@ -108,6 +120,35 @@ For each lane, in parallel up to the cap:
       parsing the subject line — summaries contain colons.
     - Failure, red tests/build, or a reported blocker -> that lane stops. Do not
       start its remaining tasks. Other lanes continue to completion.
+
+## Executing a serial run
+
+A serial run is 2–4 tasks that must run in order with nothing beside them.
+Handing them over one at a time costs a spawn, a cherry-pick and a full suite
+run per task — roughly half the time of a typical task. Run them in one pass:
+
+1. Invoke one saboteur-task-implementor with `isolation: worktree` and every
+   task in the run, in order, each with its spec slice and `done_when`. Tell it
+   this is a serial run: it commits each task in its worktree as it goes and
+   stops at the first task it cannot get green.
+2. When it returns, check every committed task against its own `done_when`,
+   exactly as for a single task, running the clause checks on the final tree.
+   Confirm each commit touches only that task's declared `Files`
+   (`git show --stat <sha>`) and carries its `Task-Id: <id>` trailer.
+3. Run the feature's full test/build once on the final tree.
+4. All checks pass and the suite is green -> fast-forward the feature branch to
+   the run's last commit. No cherry-pick is needed: the worktree started from
+   the feature branch head and nothing else landed meanwhile.
+5. Any check fails -> find the first failing task by checking out each commit
+   in turn in the worktree and re-running that task's checks. Fast-forward only
+   to the commit before it, then HALT and report as for a failed lane. If the
+   implementor stopped early, publish the tasks it finished that pass their
+   checks, then HALT.
+
+The guarantee is unchanged: nothing reaches the feature branch until its
+`done_when` has been checked and the suite is green on the combined result.
+What a serial run gives up is the early stop — a task that misses its
+condition is found after its successors are built, not before.
 
 ## Integrating a wave
 
@@ -149,7 +190,9 @@ Once every lane has finished or stopped:
 
 - Task list: <path> — <conforms to sab.tasks/1, or the violations that blocked entry>
 - Waves: <n waves; which ran concurrently and which lanes were merged for file conflicts>
+- Serial runs: <which tasks ran as serial runs, or "none">
 - Completed: <task ids committed, with short summaries>
 - Halted at: <wave / task id> — <why: implementor failure / red integration / cherry-pick conflict>
 - Remaining: <task ids not yet attempted>
+- Worktrees to remove: <path — HEAD reachable from feature branch: yes / no>, or "none"
 - Suggested options for the lead to put to the user: <skip / resolve / cancel>

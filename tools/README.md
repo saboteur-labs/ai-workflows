@@ -193,6 +193,22 @@ The check scripts contain real, runnable logic and are called by both
 `validate.sh` and the CI workflows. The `chunk_file.py` and
 `fetch_prompt.js` files are stubs pending implementation.
 
+### Derived task fields
+
+`check-outputs.js --doc <tasks.md> --schema sab.tasks/1 --json` derives the
+task graph that `saboteur-feature-orchestrator` executes from:
+
+| Field                 | Meaning                                                                                          |
+| --------------------- | ------------------------------------------------------------------------------------------------ |
+| `execution_waves`     | Dependency levels. Tasks in one wave do not depend on each other                                |
+| `file_conflicts`      | Same-wave task pairs whose `Files` overlap. A directory entry (`src/`) overlaps every file under it |
+| `critical_path`       | The longest dependency chain, as task ids in order. Compare with the declared `Critical path`     |
+| `serial_runs`         | Stretches of consecutive single-lane waves (2–4 tasks) the orchestrator gives to one implementor   |
+| `directory_entries`   | Tasks whose `Files` names a directory rather than a file                                         |
+| `tasks_without_paths` | Tasks whose `Files` names no path at all, so no conflict can be detected for them                |
+
+None of these affect the exit code. A task list that validates still validates.
+
 ---
 
 ## Token estimation

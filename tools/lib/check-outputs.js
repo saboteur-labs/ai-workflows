@@ -1016,17 +1016,93 @@ function deriveJson(doc, schema, sourcePath) {
           .filter((p) => /[/.]/.test(p)),
       ));
     }
+    // A directory entry (trailing "/") covers every path beneath it, so it
+    // overlaps an entry for any file inside it, not only an identical entry.
+    // Exact string comparison alone would let a task declaring `src/` run
+    // beside a task declaring `src/main.ts` — a collision found only at
+    // cherry-pick time, where the orchestrator must halt.
+    const overlap = (a, b) => {
+      const shared = new Set();
+      for (const p of a) {
+        for (const q of b) {
+          if (p === q) shared.add(p);
+          else if (p.endsWith('/') && q.startsWith(p)) shared.add(q);
+          else if (q.endsWith('/') && p.startsWith(q)) shared.add(p);
+        }
+      }
+      return [...shared];
+    };
     const conflicts = [];
     for (const w of out.execution_waves) {
       for (let a = 0; a < w.length; a++) {
         for (let b = a + 1; b < w.length; b++) {
-          const other = pathsOf.get(w[b]) || new Set();
-          const shared = [...(pathsOf.get(w[a]) || [])].filter((p) => other.has(p));
+          const shared = overlap(pathsOf.get(w[a]) || [], pathsOf.get(w[b]) || []);
           if (shared.length) conflicts.push({ tasks: [w[a], w[b]], files: shared });
         }
       }
     }
     out.file_conflicts = conflicts;
+
+    // Longest dependency chain, by task count. A task's level is already its
+    // longest path from a root, so walk back from a deepest task through a
+    // dependency exactly one level lower. Ties go to the lowest id, so the
+    // result is deterministic.
+    const cp = [];
+    if (level.size) {
+      const deepest = Math.max(...level.values());
+      let cur = Math.min(...[...level].filter(([, v]) => v === deepest).map(([k]) => k));
+      while (cur !== undefined) {
+        cp.unshift(cur);
+        const lv = level.get(cur);
+        cur = (depsOf.get(cur) || [])
+          .filter((d) => level.get(d) === lv - 1)
+          .sort((x, y) => x - y)[0];
+      }
+    }
+    out.critical_path = cp;
+
+    // Serial runs: maximal stretches of consecutive waves that each form ONE
+    // lane after file-conflict merging. Nothing can run beside these tasks
+    // anyway, so handing a stretch to one implementor loses no parallelism and
+    // saves a spawn, an integration and a full suite run per task. Split at
+    // MAX_SERIAL_RUN tasks so the check between runs stays frequent.
+    const MAX_SERIAL_RUN = 4;
+    const oneLane = (w) => {
+      const parent = new Map(w.map((x) => [x, x]));
+      const find = (x) => (parent.get(x) === x ? x : find(parent.get(x)));
+      for (const c of conflicts) {
+        const [a, b] = c.tasks;
+        if (parent.has(a) && parent.has(b)) parent.set(find(a), find(b));
+      }
+      return new Set(w.map(find)).size === 1;
+    };
+    const runs = [];
+    let run = [];
+    const flush = () => {
+      for (let i = 0; i < run.length; i += MAX_SERIAL_RUN) {
+        const chunk = run.slice(i, i + MAX_SERIAL_RUN);
+        if (chunk.length >= 2) runs.push(chunk);
+      }
+      run = [];
+    };
+    for (const w of out.execution_waves) {
+      if (oneLane(w)) run.push(...w);
+      else flush();
+    }
+    flush();
+    out.serial_runs = runs;
+
+    // Declared-Files quality. Neither is a validation error: both are
+    // reported so the lead can show them at the plan gate. A directory entry
+    // serialises every task touching anything beneath it; a task with no
+    // file paths at all ("TBD") cannot be checked for conflicts.
+    out.directory_entries = [];
+    out.tasks_without_paths = [];
+    for (const [id, paths] of pathsOf) {
+      const dirs = [...paths].filter((p) => p.endsWith('/'));
+      if (dirs.length) out.directory_entries.push({ task: id, paths: dirs });
+      if (!paths.size) out.tasks_without_paths.push(id);
+    }
   }
 
   return out;

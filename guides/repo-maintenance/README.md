@@ -7,5 +7,5 @@ content.
 | File                                                                 | Status  | Description                                            |
 | -------------------------------------------------------------------- | ------- | ------------------------------------------------------ |
 | [`how-this-repo-is-structured.md`](./how-this-repo-is-structured.md) | ✅ Done | Authoritative reference for what lives where and why, including `pipeline/` as the one interface-specific subtree |
-| [`dependency-map.md`](./dependency-map.md)                           | ✅ Done | Which files must change together, and which changelog a skill logs to — mirrors what `tools/lib/check_atomicity.sh` blocks on, plus the `pipeline/` couplings enforced by `tools/lib/check_ladder.sh` |
+| [`dependency-map.md`](./dependency-map.md)                           | ✅ Done | Which files must change together, and which changelog a skill logs to — mirrors what `tools/lib/check_atomicity.sh` blocks on, plus the `pipeline/` couplings enforced by `tools/lib/check_ladder.sh` and the derived task fields the orchestrator consumes |
 | [`contributing-with-ai.md`](./contributing-with-ai.md)               | ✅ Done | How to use `skills/repo-maintenance/` and `skills/freshness-check/` to propose additions |

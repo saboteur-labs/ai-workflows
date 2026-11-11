@@ -11,6 +11,9 @@ versions:
     - version: 1.0.0
       date: 2026-03-17
       note: Initial version
+    - version: 1.1.0
+      date: 2026-11-10
+      note: Require concrete file paths and per-task result files; keep dependency chains short
 ---
 
 # Break a spec into tasks
@@ -64,6 +67,17 @@ Rules for each task:
    comes after it.
 4. Do not create tasks for things outside the spec's functional requirements.
    Non-goals stay non-goals.
+5. List concrete file paths under Files, never a bare directory. A directory
+   entry overlaps every file beneath it, so every task touching that directory
+   is forced to run one at a time.
+6. Do not list one shared log or notebook file (an experiments log, a
+   verification record) in the Files of tasks that do not depend on each other.
+   Have each task record its results in its own file instead, e.g.
+   `experiments/task-7.md`. Two tasks editing one file cannot run at the same
+   time, even when the file only collects results.
+7. Depend only on what a task actually needs. If task B needs only the types or
+   signatures task A defines, split out a small interface task both depend on,
+   so A and B can run in parallel. Keep the critical path short.
 
 Output format — one entry per task:
 
