@@ -208,6 +208,17 @@ particular report shape back, and nothing validates that pairing.
 | `tools/README.md` | **Required**           | Update usage documentation |
 | `CHANGELOG.md`    | **Required**           | Add entry                  |
 
+### Changing the derived task fields of `check-outputs.js`
+
+`saboteur-feature-orchestrator` consumes `execution_waves`, `file_conflicts`
+and `serial_runs` by name, and the saboteur-ship lead names the others at
+Gate 4. Nothing validates that pairing.
+
+| File to update                                     | Required / Recommended | What to change                                       |
+| -------------------------------------------------- | ---------------------- | ---------------------------------------------------- |
+| `pipeline/agents/saboteur-feature-orchestrator.md` | Recommended            | Any field it names that was renamed or redefined     |
+| `pipeline/skills/saboteur-ship/SKILL.md`           | Recommended            | Gate 4 names the fields it presents                  |
+
 ---
 
 ## CI workflow changes

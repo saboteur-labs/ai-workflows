@@ -164,14 +164,19 @@ against the finalized feature spec, saving to `specs/features/{slug}/tasks.md`.
 Validate against `sab.tasks/1` — the orchestrator hard-gates on this at its
 entry, so a task list that fails here will not run. Do not enter plan mode —
 this stage is the plan.
-GATE 4: Present the task list in full, plus the file it was saved to. Write no
-code until I approve.
+GATE 4: Present the task list in full, plus the file it was saved to. From the
+`check-outputs.js --json` output, also show `critical_path` (its length against
+the total task count), `serial_runs`, and any `directory_entries` or
+`tasks_without_paths`. If the computed critical path disagrees with the list's
+declared one, say so — a long chain is cheaper to split now than to wait
+through. Write no code until I approve.
 On approval, run: `touch .claude/.plan-approved`
 
 ## Stage 5 — Execute (rung 6)
 
 Delegate the approved feature spec + task list to saboteur-feature-orchestrator.
-It implements tasks one at a time and commits each verified task.
+It runs independent tasks in parallel lanes and serial stretches in one pass,
+and commits each verified task.
 Hard limits for this stage: do not change permissions, delete data, or
 push/merge.
 If it halts with a failure report, present the failed task and its options.
@@ -210,5 +215,8 @@ On my approval to close out, run Cleanup.
 
 ## Cleanup
 
-Run: `rm -f .claude/.pipeline-active .claude/.plan-approved`
+Remove the agent worktrees the orchestrator listed under "Worktrees to
+remove", after confirming each one's HEAD is reachable from the feature branch.
+One that is not holds unlanded work: present it instead of removing it.
+Then run: `rm -f .claude/.pipeline-active .claude/.plan-approved`
 Do this on successful close-out AND on any cancellation.

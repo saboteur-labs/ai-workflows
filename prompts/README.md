@@ -62,7 +62,7 @@ to the relevant project's `.claude/skills/`).
 | [`planning/write-product-spec.md`](./planning/write-product-spec.md)   | medium | Expand a concept document into a milestone-organized product spec             |
 | [`planning/write-feature-spec.md`](./planning/write-feature-spec.md)   | low    | Turn a rough idea into a structured feature spec                 |
 | [`planning/break-into-features.md`](./planning/break-into-features.md) | medium | Break a product spec into independently shippable vertical-slice features |
-| [`planning/break-into-tasks.md`](./planning/break-into-tasks.md)       | low    | Break a spec into a prioritised, estimated task list             |
+| [`planning/break-into-tasks.md`](./planning/break-into-tasks.md)       | low    | Break a spec into a prioritised, estimated task list with a short critical path |
 | [`planning/write-adr.md`](./planning/write-adr.md)                                                         | low    | Document an architectural decision with context and consequences                      |
 | [`planning/surface-architecture-decisions.md`](./planning/surface-architecture-decisions.md)               | high   | Discover and confirm implicit/explicit architecture decisions in a codebase, then hand off to write-adr |
 | [`planning/estimate-complexity.md`](./planning/estimate-complexity.md) | low    | Estimate the complexity and risk of a piece of work              |
