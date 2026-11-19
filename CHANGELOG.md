@@ -273,6 +273,10 @@ bottom, and open a new empty `[Unreleased]` block above it.
 
 ### Fixed
 
+- `tools/lib/check-outputs.js` — piped output was cut off at 64 KiB, so
+  `--json` on a large task list (97 KB for a 47-task list) produced invalid
+  JSON for whatever read it. The script now lets stdout finish before exiting.
+  Exit codes are unchanged
 - `.github/workflows/validate-outputs.yml` did not run on `skills/**/SKILL.md`.
   Once a schema could declare `skill:` instead of `prompt:`, a `SKILL.md`
   became the authored format the drift check compares against — but the path

@@ -208,6 +208,7 @@ task graph that `saboteur-feature-orchestrator` executes from:
 | `tasks_without_paths` | Tasks whose `Files` names no path at all, so no conflict can be detected for them                |
 
 None of these affect the exit code. A task list that validates still validates.
+The JSON is written in full whether stdout is a terminal, a file or a pipe.
 
 ---
 
