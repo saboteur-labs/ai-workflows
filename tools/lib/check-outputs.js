@@ -1216,7 +1216,9 @@ function main(argv) {
 }
 
 if (require.main === module) {
-  process.exit(main(process.argv.slice(2)));
+  // Not process.exit(): on POSIX, stdout to a pipe is asynchronous, and exiting
+  // early cut piped --json output off at 64 KiB.
+  process.exitCode = main(process.argv.slice(2));
 }
 
 module.exports = { parseSchema, parseDocument, validateDocument, deriveJson, loadSchemas };
