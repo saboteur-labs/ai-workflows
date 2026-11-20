@@ -171,6 +171,15 @@ Once every lane has finished or stopped:
    the wave. The completed tasks are committed and durable; the lead decides
    whether to skip, resolve, or cancel.
 
+## Smoke after the last wave
+
+If the lead passed smoke commands, run each one once on the feature branch
+after the **last** wave or serial run publishes. Green -> report it. Red ->
+HALT as for a red integration: the tasks stay published, and report the
+failing output and which tasks cite that surface. A smoke can outlast the
+180-second Bash limit for subagents; if it is moved to the background, wait
+for its result, do not re-run it.
+
 ## Constraints
 
 - Only delegate to saboteur-task-implementor. Never implement tasks yourself.
@@ -192,7 +201,8 @@ Once every lane has finished or stopped:
 - Waves: <n waves; which ran concurrently and which lanes were merged for file conflicts>
 - Serial runs: <which tasks ran as serial runs, or "none">
 - Completed: <task ids committed, with short summaries>
-- Halted at: <wave / task id> — <why: implementor failure / red integration / cherry-pick conflict>
+- Halted at: <wave / task id> — <why: implementor failure / red integration / cherry-pick conflict / red smoke>
+- Smoke: <each command — green / red with the failing check>, or "none passed"
 - Remaining: <task ids not yet attempted>
 - Worktrees to remove: <path — HEAD reachable from feature branch: yes / no>, or "none"
 - Suggested options for the lead to put to the user: <skip / resolve / cancel>

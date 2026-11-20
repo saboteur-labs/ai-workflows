@@ -14,6 +14,9 @@ versions:
     - version: 1.1.0
       date: 2026-11-10
       note: Require concrete file paths and per-task result files; keep dependency chains short
+    - version: 1.2.0
+      date: 2026-11-20
+      note: Done conditions for user-facing tasks name the project's target surfaces
 ---
 
 # Break a spec into tasks
@@ -78,6 +81,16 @@ Rules for each task:
 7. Depend only on what a task actually needs. If task B needs only the types or
    signatures task A defines, split out a small interface task both depend on,
    so A and B can run in parallel. Keep the critical path short.
+8. If the project lists target surfaces (environments such as phone width,
+   dark mode, an insecure origin, a hosted deployment or a packaged app), the
+   done condition of every task that changes what a user sees or does, or
+   the path a surface depends on, names each listed surface where its
+   behaviour can differ, by the name the project gives it, and how that is
+   checked through the real thing: real layout in a browser at that size, the
+   real editor component, the real origin, the real services. A unit test
+   against a mock of that environment does not satisfy it. Where a surface
+   can only be checked on hardware, say so in the done condition so the check
+   is planned, not skipped.
 
 Output format — one entry per task:
 
