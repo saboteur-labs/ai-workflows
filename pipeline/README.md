@@ -29,6 +29,45 @@ it is a normal skill at
 [`../skills/saboteur-onboard-pipeline/`](../skills/saboteur-onboard-pipeline/),
 because it is invoked on demand rather than being part of a run.
 
+A run chooses its approval mode at Gate 0. `standard` stops at every gate.
+`delegated` accepts evidence-backed triage answers at high confidence, merges
+the feature-spec and task-list gates, and lets approval at Gate 6 push the
+branch and open the PR. In both modes, decisions, halts, the choice of feature
+and the review before merge stop the run.
+
+---
+
+## Declaring surfaces
+
+A project lists the environments a user-facing change must work in under a
+`## Surfaces` heading in its root `CLAUDE.md` (or `AGENTS.md`). One line per
+surface: its name, how to reach it, and `agent` if an agent can exercise it
+or `hardware` if only a person with the device can. A surface may add an
+indented `Smoke:` line in one of two forms:
+
+- a command in backticks, runnable as given from the repository root on the
+  feature branch, prerequisites included, that exits non-zero on failure;
+- `run book <path>`, a file of steps for checks that start services or a
+  background server.
+
+```markdown
+## Surfaces
+- Desktop browser, 1280×800 — `pnpm dev`, Playwright — agent
+- Phone width, 412×915 — Playwright viewport — agent
+- Dark colour scheme — Playwright dark mode — agent
+- Home-network sharing over plain HTTP — standalone server on the LAN address — agent
+  Smoke: `pnpm smoke:sharing`
+- Hosted (Postgres, SMTP, production build) — Docker Compose — agent
+  Smoke: run book `scripts/hosted-smoke/README.md`
+- Packaged desktop app — `pnpm electron:build` — agent
+- Android native on a device — `pnpm build:native`, install on the Pixel — hardware
+```
+
+A smoke runs only when the feature's task list cites its surface. The
+orchestrator runs command smokes after the last wave. The lead follows run
+books at Stage 6.5. A project with no `## Surfaces` section runs exactly as
+before.
+
 ---
 
 ## Installing

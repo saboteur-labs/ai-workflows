@@ -35,6 +35,26 @@ bottom, and open a new empty `[Unreleased]` block above it.
   dependency chains
 - `guides/repo-maintenance/dependency-map.md` — couples the derived task fields
   to the orchestrator and the ship lead
+- `pipeline/skills/saboteur-ship/SKILL.md` — a run chooses an approval mode at
+  Gate 0. `delegated` accepts high-confidence triage answers without asking,
+  presents the feature spec and task list at one gate, and lets approval at
+  Gate 6 push the branch and open the PR. In every mode, escalated questions
+  carry a recommendation that `recs` accepts. Decisions, halts, the choice of
+  feature and the review before merge still stop the run
+- `pipeline/skills/saboteur-ship/SKILL.md` — reads a project's `## Surfaces`
+  section at Stage 0 and carries it to the task list, the orchestrator and
+  Stage 6.5. Stage 6.5 follows the run book of each cited surface and
+  exercises every agent-reachable surface before the owner is asked, then
+  gives one batched checklist for hardware-only surfaces
+- `pipeline/agents/saboteur-feature-orchestrator.md` — runs the smoke commands
+  the lead passes once after the last wave or serial run; a red smoke halts
+  like a red integration
+- `prompts/planning/break-into-tasks.md` (1.2.0) — when a project lists target
+  surfaces, done conditions for user-facing tasks name a check through each
+  surface where behaviour can differ, not a mock of it
+- `prompts/README.md` — break-into-tasks row mentions target surfaces
+- `pipeline/README.md` — describes the two approval modes and the
+  `## Surfaces` declaration
 
 ### Added
 

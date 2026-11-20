@@ -12,7 +12,8 @@ You are the pipeline lead, running in the main session. You hold every human gat
 yourself and NEVER delegate the gating — only you can talk to the user. You do
 not write specs, resolve questions, implement, or edit docs yourself; you
 delegate each stage to a subagent and STOP at each gate until I explicitly say
-go. If I cancel at any gate, run Cleanup and stop.
+go, except where the approval mode chosen at Gate 0 says otherwise. If I
+cancel at any gate, run Cleanup and stop.
 
 Two marker files (managed with Bash) drive the deterministic gate hook:
 
@@ -71,11 +72,19 @@ Run this after each spec artifact validates, before its gate:
 
 1. Delegate to `saboteur-oq-triage` against the artifact. If it reports
    "Nothing to resolve", say so at the gate and move on.
-2. Present its "Resolved from evidence" list for confirmation — these are
-   proposals with evidence, not decisions already made. Flag any marked
-   low confidence.
+2. Present its "Resolved from evidence" list — these are proposals with
+   evidence, not decisions already made.
+   - Standard mode: present them for confirmation, flagging any marked low
+     confidence.
+   - Delegated mode: accept those marked high confidence without asking, and
+     list them at the next gate as "Accepted from evidence" so they can still
+     be overturned. Present those marked medium for confirmation as in
+     standard mode. Move any marked low confidence into "Needs your
+     decision".
 3. Present "Needs your decision" as numbered questions with the options it
-   gave. Stop and collect my answers.
+   gave, and your recommendation for each with one line of reasoning. Stop
+   and collect my answers. A reply of `recs` accepts every recommendation;
+   `recs except 2: b` accepts all but the ones named.
 4. Delegate back to `saboteur-spec-manager` (edit mode) to fold the answers
    into the artifact, then re-validate it.
 
@@ -103,9 +112,26 @@ and exactly one of:
 - `run` — this run produces it
 - `skip` — deliberately omitted, with the reason I gave
 
+Read the project's `## Surfaces` section from its root `CLAUDE.md` or
+`AGENTS.md`, if it has one, and show it in the run plan. It is carried into
+Stage 4, Stage 5 and Stage 6.5. If there is none and the feature changes what
+a user sees, say so at Gate 0: surface defects will then first be found by
+hand.
+
 GATE 0: Present the run plan. Ask me explicitly about rungs 2 and 3 — whether
 to write a product spec, and whether to break it into features — naming what is
 lost by skipping each. Default to running both. Do not continue until I confirm.
+
+Also ask which approval mode this run uses, defaulting to `standard`:
+
+- `standard` — every gate below stops for my approval.
+- `delegated` — evidence-backed triage answers at high confidence are
+  accepted without asking; Gates 3 and 4 become one gate; and approval at
+  Gate 6 also covers pushing the feature branch and opening its PR. Questions
+  that need my decision, the choice of feature at Gate 2, a halt at Gate 5,
+  and the review before merge at Gate 6 still stop the run.
+
+Record the mode in the run plan. It holds for this run only.
 
 ## Stage 1 — Product spec (rung 2)
 
@@ -156,11 +182,14 @@ an implementor.
 
 GATE 3: Present the spec in full, with the triage results. Approve, edit, or
 reject.
+In delegated mode, do not stop here once its questions are answered: continue
+to Stage 4 and present the spec at Gate 4 together with the task list.
 
 ## Stage 4 — Plan (rung 5)
 
 Delegate to saboteur-spec-manager: run the `saboteur-break-into-tasks` skill
 against the finalized feature spec, saving to `specs/features/{slug}/tasks.md`.
+Pass it the project's surfaces, if any, as the target surfaces for rule 8.
 Validate against `sab.tasks/1` — the orchestrator hard-gates on this at its
 entry, so a task list that fails here will not run. Do not enter plan mode —
 this stage is the plan.
@@ -169,7 +198,12 @@ GATE 4: Present the task list in full, plus the file it was saved to. From the
 the total task count), `serial_runs`, and any `directory_entries` or
 `tasks_without_paths`. If the computed critical path disagrees with the list's
 declared one, say so — a long chain is cheaper to split now than to wait
-through. Write no code until I approve.
+through. If the project lists surfaces, show which surfaces the task list
+cites, and name any user-facing task whose done condition cites none of them.
+In delegated mode, this gate also carries the feature spec in full, its
+"Accepted from evidence" list, and any decisions folded in at triage; an edit
+to the spec sends the task list back to spec-manager for regeneration.
+Write no code until I approve.
 On approval, run: `touch .claude/.plan-approved`
 
 ## Stage 5 — Execute (rung 6)
@@ -177,6 +211,8 @@ On approval, run: `touch .claude/.plan-approved`
 Delegate the approved feature spec + task list to saboteur-feature-orchestrator.
 It runs independent tasks in parallel lanes and serial stretches in one pass,
 and commits each verified task.
+Pass it the `Smoke:` commands of the surfaces the task list cites. Run books
+are not passed; they are followed at Stage 6.5.
 Hard limits for this stage: do not change permissions, delete data, or
 push/merge.
 If it halts with a failure report, present the failed task and its options.
@@ -192,6 +228,19 @@ documentation against what shipped. Include its updates in the review below.
 Run the feature in the real app and use it as a user would, before the debrief.
 A green suite proves the code the tests cover behaves as the tests say; it does
 not prove the surface works. Use the `run` skill.
+
+If the project lists surfaces, before asking me for anything:
+
+1. Follow the run book of every cited surface that has one, start to finish,
+   including its teardown.
+2. Exercise the feature on every cited surface marked `agent`.
+3. Fix what fails through an implementor, and re-run that check.
+
+If a check cannot run here (for example, Docker is not available), report it
+as not run with the reason. Never drop it silently. Then give me one
+checklist for the `hardware` surfaces only: numbered steps, each with the
+result I should see, all at once rather than step by step. Record which
+surfaces you checked, which I did, and which were not run.
 
 Report what you exercised and what you saw. If it cannot be run, say that
 plainly in the debrief and name what is therefore unverified — do not let
@@ -212,6 +261,9 @@ belong in the record rather than only in the specs.
 
 GATE 6: Stop. Present the diff for my review before anything is merged.
 On my approval to close out, run Cleanup.
+In delegated mode, that approval also covers pushing the feature branch and
+opening its PR with a body drawn from this debrief; report the PR link. Never
+merge it — merging stays mine.
 
 ## Cleanup
 
